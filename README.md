@@ -1,7 +1,8 @@
 ```markdown
 # GooglSearch-Tool
 
-**GooglSearch-Tool** 是一个 Python 库，用于进行 Google 搜索并获取搜索结果。支持动态查询参数、结果去重以及自定义代理配置。这个库主要用于 Web 数据抓取和分析。
+**GooglSearch-Tool** 是一个 Python 库，用于进行 Google 搜索并获取搜索结果。支持动态查询参数、结果去重以及自定义代理配置。这个库主要用于
+Web 数据抓取和分析。
 
 ## 特性
 
@@ -13,10 +14,10 @@
 
 ## 安装
 
-可以通过 `pip` 安装 `googlesearcher`：
+可以通过 `pip` 安装 `googlesearch`：
 
 ```bash
-pip install googlesearcher
+pip install googlesearch-tool
 ```
 
 ## 使用方法
@@ -25,18 +26,19 @@ pip install googlesearcher
 
 ```python
 import asyncio
-from googlesearch-tool import search
+from googlesearch import search
+
 
 async def main():
     results = await search(
         term="xi site:www.theguardian.com",
         num=100,
         tbs="qdr:d",
-        timeout=10,
-        proxies={"http://": "http://your-proxy", "https://": "https://your-proxy"}
+        timeout=10
     )
     for result in results:
         print(result)
+
 
 if __name__ == "__main__":
     asyncio.run(main())
