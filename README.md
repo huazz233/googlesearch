@@ -91,4 +91,4 @@ if __name__ == "__main__":
 
 ## 联系
 
-如有任何问题或建议，请通过 [huazz233163.com](mailto:huazz233163.com) 与我们联系。
+如有任何问题或建议，请通过 [huazz233@163.com](mailto:huazz233@163.com) 与我们联系。
