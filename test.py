@@ -1,5 +1,6 @@
 import asyncio
 
+from googlesearch.config.config import Config
 from googlesearch.news_search import search_news
 from googlesearch.search import search
 
@@ -18,8 +19,15 @@ async def main():
         "http://": "http://127.0.0.1:10809",
         "https://": "http://127.0.0.1:10809"
     }
-    # 普通搜索
-    results = await search(term="xi site:www.theguardian.com", num=100, tbs="qdr:h", proxies=proxies)
+    # Google搜索参数
+    # "hl": lang           # 语言（例如："en" 表示英文）
+    # "tbs": "qdr:h"       # 时间范围（例如："qdr:h" 表示过去一小时）
+    # sleep_interval = 1   # 睡眠时间（单位：秒）
+    # safe = "active"      # 安全搜索设置（"active" 表示启用安全搜索）
+
+    url = Config.get_random_domain()
+    headers = {"User-Agent": Config.get_random_user_agent()}
+    results = await search(url, headers, term="xi site:www.theguardian.com", num=100, tbs="qdr:h", proxies=proxies)
     print("普通搜索结果:")
     if results:
         for result in results:
@@ -32,7 +40,8 @@ async def main():
     print("\n=================================\n")
 
     # 新闻搜索
-    news_results = await search_news(term="xi site:www.theguardian.com", num=100, tbs="qdr:d", proxy=proxies)
+    news_results = await search_news(url, headers, term="xi site:www.theguardian.com", num=100, tbs="qdr:d",
+                                     proxy=proxies)
     print("\n新闻搜索结果:")
     if news_results:
         for result in news_results:

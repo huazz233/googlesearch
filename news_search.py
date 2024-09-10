@@ -34,7 +34,7 @@ async def parse_news_results(resp_text, deduplicate_results):
     return results
 
 
-async def search_news(term, num=20, lang="en", proxy=None, sleep_interval=0, timeout=5, safe="active",
+async def search_news(url, headers, term, num=20, lang="en", proxy=None, sleep_interval=0,
                       deduplicate_results=False, **kwargs):
     kwargs["tbm"] = "nws"
     escaped_term = term.replace(' site:', '+site:')
@@ -43,7 +43,7 @@ async def search_news(term, num=20, lang="en", proxy=None, sleep_interval=0, tim
         client_options['proxies'] = proxy
 
     async with httpx.AsyncClient(**client_options, verify=True) as client:
-        resp_text = await _req(client, escaped_term, num, lang, timeout, safe, **kwargs)
+        resp_text = await _req(url, headers, client, escaped_term, num, lang, **kwargs)
         if not resp_text:
             raise ValueError("页面无响应")
         results = await parse_news_results(resp_text, deduplicate_results)

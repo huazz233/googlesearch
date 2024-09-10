@@ -10,13 +10,14 @@ class Config:
     UA_PATH = os.path.join(DATA_DIR, "user_agents.txt")
     DOMAIN_PATH = os.path.join(DATA_DIR, "all_domain.txt")
 
+    # 初次加载域名列表和User-Agent列表
+    all_domains = ["www.google.com"]  # 默认值，以防文件读取失败
+    all_user_agents = [
+        "Mozilla/5.0 (X11; CrOS x86_64 15823.60.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.6367.225 Safari/537.36"]  # 默认值
+
     @staticmethod
     def get_data(file_path):
-        """从文件中读取数据并以列表格式输出
-
-        Args:
-            file_path (str): 文件路径
-        """
+        """从文件中读取数据并以列表格式输出"""
         text_list = []
         with open(file_path, encoding="utf-8") as fp:
             for line in fp:
@@ -25,32 +26,29 @@ class Config:
                     text_list.append(line)
         return text_list
 
-    @staticmethod
-    def load_user_agents():
-        """加载 User-Agent 配置"""
-        return Config.get_data(Config.UA_PATH)
+    @classmethod
+    def load_user_agents(cls):
+        """加载 User-Agent 配置，仅在初次加载时调用"""
+        cls.all_user_agents = cls.get_data(cls.UA_PATH)
 
-    @staticmethod
-    def load_domains():
-        """加载搜索域名配置"""
-        return Config.get_data(Config.DOMAIN_PATH)
+    @classmethod
+    def load_domains(cls):
+        """加载搜索域名配置，仅在初次加载时调用"""
+        cls.all_domains = cls.get_data(cls.DOMAIN_PATH)
 
-
-    @staticmethod
-    def get_random_user_agent():
+    @classmethod
+    def get_random_user_agent(cls):
         """从 User-Agent 列表中随机选择一个"""
-        user_agents = Config.load_user_agents()
-        return random.choice(user_agents) if user_agents \
-            else "Mozilla/5.0 (X11; CrOS x86_64 15823.60.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.6367.225 Safari/537.36"
+        return random.choice(
+            cls.all_user_agents) if cls.all_user_agents else "Mozilla/5.0 (X11; CrOS x86_64 15823.60.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.6367.225 Safari/537.36"
 
-    @staticmethod
-    def get_random_domain():
+    @classmethod
+    def get_random_domain(cls):
         """从域名列表中随机选择一个域名"""
-        domains = Config.load_domains()
-        return random.choice(domains) if domains else "www.google.com"
+        random_domain = random.choice(cls.all_domains) if cls.all_domains else "www.google.com"
+        return f"https://{random_domain}/search"
 
 
-# 从配置类中加载 User-Agent 和基本 URL
-user_agent = Config.get_random_user_agent()
-random_domain = Config.get_random_domain()
-base_url = f"https://{random_domain}/search"
+# 加载配置数据
+Config.load_user_agents()
+Config.load_domains()

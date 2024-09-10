@@ -2,20 +2,16 @@ import asyncio
 
 import httpx
 from bs4 import BeautifulSoup
-from googlesearch.config.config import base_url, user_agent
+from config.config import Config
 from googlesearch.models import SearchResult
 from googlesearch.utils import deduplicate, clean_description
 
 
-async def _req(client, term, num_results, lang, timeout, safe, **kwargs):
-    url = base_url
-    headers = {"User-Agent": user_agent}
+async def _req(url, headers, client, term, num_results, timeout, **kwargs):
     params = {
         "q": term,
         "num": num_results,
-        "hl": lang,
         "start": 0,
-        "safe": safe,
         "biw": 1692,  # 指定窗口高度，宽度
         "bih": 856,
         **{k: v for k, v in kwargs.items()}
@@ -72,7 +68,7 @@ async def parse_results(resp_text, deduplicate_results):
     return results
 
 
-async def search(term, num=20, lang="en", proxies=None, sleep_interval=0, timeout=5, safe="active",
+async def search(url, headers, term, num=20, proxies=None, sleep_interval=0, timeout=5,
                  deduplicate_results=False, **kwargs):
     escaped_term = term.replace(' site:', '+site:')
     client_options = {}
@@ -80,7 +76,7 @@ async def search(term, num=20, lang="en", proxies=None, sleep_interval=0, timeou
         client_options['proxies'] = proxies
     # client_options['verify'] = False
     async with httpx.AsyncClient(**client_options) as client:
-        resp_text = await _req(client, escaped_term, num, lang, timeout, safe, **kwargs)
+        resp_text = await _req(url, headers, client, escaped_term, num, timeout, **kwargs)
         if not resp_text:
             raise ValueError("页面无响应")
         results = await parse_results(resp_text, deduplicate_results)
