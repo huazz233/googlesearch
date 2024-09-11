@@ -2,7 +2,6 @@ import asyncio
 
 import httpx
 from bs4 import BeautifulSoup
-from config.config import Config
 from googlesearch.models import SearchResult
 from googlesearch.utils import deduplicate, clean_description
 
