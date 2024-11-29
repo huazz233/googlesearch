@@ -2,9 +2,9 @@
 
 **GooglSearch-Tool** is a Python library for performing Google searches and retrieving search results. It supports dynamic query parameters, result deduplication, and custom proxy configuration.
 
-[![GitHub stars](https://img.shields.io/github/stars/yourusername/googlesearch-tool.svg)](https://github.com/yourusername/googlesearch-tool/stargazers)
-[![GitHub issues](https://img.shields.io/github/issues/yourusername/googlesearch-tool.svg)](https://github.com/yourusername/googlesearch-tool/issues)
-[![GitHub license](https://img.shields.io/github/license/yourusername/googlesearch-tool.svg)](https://github.com/yourusername/googlesearch-tool/blob/master/LICENSE)
+[![GitHub stars](https://img.shields.io/github/stars/huazz233/googlesearch.svg)](https://github.com/huazz233/googlesearch/stargazers)
+[![GitHub issues](https://img.shields.io/github/issues/huazz233/googlesearch.svg)](https://github.com/huazz233/googlesearch/issues)
+[![GitHub license](https://img.shields.io/github/license/huazz233/googlesearch.svg)](https://github.com/huazz233/googlesearch/blob/master/LICENSE)
 
 [简体中文](README.md) | English
 
@@ -194,7 +194,7 @@ We welcome community members to participate in project development! Here are sev
 If you find this project helpful, please show your support by clicking the Star button in the top right corner!
 
 ### Submit Issues
-Found a bug or have a feature suggestion? Please submit an [Issue](https://github.com/yourusername/googlesearch-tool/issues)!
+Found a bug or have a feature suggestion? Please submit an [Issue](https://github.com/huazz233/googlesearch/issues)!
 - 🐛 Bug reports: Please describe the issue in detail with steps to reproduce
 - 💡 Feature suggestions: Please explain the use case and expected behavior
 
@@ -212,9 +212,9 @@ We will carefully review each PR and provide timely feedback.
 ## Community Support
 
 - 📫 Email: [huazz233@163.com](mailto:huazz233@163.com)
-- 💬 Issue Feedback: [GitHub Issues](https://github.com/yourusername/googlesearch-tool/issues)
-- 📖 Development Docs: [Wiki](https://github.com/yourusername/googlesearch-tool/wiki)
-- 👥 Discussion: [Discussions](https://github.com/yourusername/googlesearch-tool/discussions)
+- 💬 Issue Feedback: [GitHub Issues](https://github.com/huazz233/googlesearch/issues)
+- 📖 Development Docs: [Wiki](https://github.com/huazz233/googlesearch/wiki)
+- 👥 Discussion: [Discussions](https://github.com/huazz233/googlesearch/discussions)
 
 ## License
 
