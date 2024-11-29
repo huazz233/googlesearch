@@ -2,9 +2,9 @@
 
 **GooglSearch-Tool** 是一个 Python 库，用于进行 Google 搜索并获取搜索结果。支持动态查询参数、结果去重以及自定义代理配置。
 
-[![GitHub stars](https://img.shields.io/github/stars/yourusername/googlesearch-tool.svg)](https://github.com/yourusername/googlesearch-tool/stargazers)
-[![GitHub issues](https://img.shields.io/github/issues/yourusername/googlesearch-tool.svg)](https://github.com/yourusername/googlesearch-tool/issues)
-[![GitHub license](https://img.shields.io/github/license/yourusername/googlesearch-tool.svg)](https://github.com/yourusername/googlesearch-tool/blob/master/LICENSE)
+[![GitHub stars](https://img.shields.io/github/stars/huazz233/googlesearch.svg)](https://github.com/huazz233/googlesearch/stargazers)
+[![GitHub issues](https://img.shields.io/github/issues/huazz233/googlesearch.svg)](https://github.com/huazz233/googlesearch/issues)
+[![GitHub license](https://img.shields.io/github/license/huazz233/googlesearch.svg)](https://github.com/huazz233/googlesearch/blob/master/LICENSE)
 
 简体中文 | [English](README_EN.md)
 
@@ -377,7 +377,7 @@ headers = {"User-Agent": Config.get_random_user_agent()}
 如果您觉得这个项目对您有帮助，欢迎点击右上角的 Star 按钮支持我们！
 
 ### 提交 Issue 
-发现 bug 或有新功能建议？欢迎提交 [Issue](https://github.com/yourusername/googlesearch-tool/issues)！
+发现 bug 或有新功能建议？欢迎提交 [Issue](https://github.com/huazz233/googlesearch/issues)！
 - 🐛 Bug 反馈：请详细描述问题现象和复现步骤
 - 💡 功能建议：请说明新功能的使用场景和预期效果
 
@@ -395,9 +395,9 @@ headers = {"User-Agent": Config.get_random_user_agent()}
 ## 社区支持
 
 - 📫 邮件联系：[huazz233@163.com](mailto:huazz233@163.com)
-- 💬 问题反馈：[GitHub Issues](https://github.com/yourusername/googlesearch-tool/issues)
-- 📖 开发文档：[Wiki](https://github.com/yourusername/googlesearch-tool/wiki)
-- 👥 讨论区：[Discussions](https://github.com/yourusername/googlesearch-tool/discussions)
+- 💬 问题反馈：[GitHub Issues](https://github.com/huazz233/googlesearch/issues)
+- 📖 开发文档：[Wiki](https://github.com/huazz233/googlesearch/wiki)
+- 👥 讨论区：[Discussions](https://github.com/huazz233/googlesearch/discussions)
 
 ## 许可证
 
