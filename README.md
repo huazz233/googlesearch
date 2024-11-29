@@ -43,60 +43,101 @@ pip install googlesearch-tool
 
 以下是使用 GooglSearch-Tool 库的基本示例：
 
-```python 
+### 基础示例
+
+```python
 import asyncio
-from googlesearch.config.config import Config
 from googlesearch.search import search
 from googlesearch.news_search import search_news
 
+async def test_search():
+    """测试普通搜索"""
+    try:
+        """
+        代理配置说明：
+        1. 不使用代理：直接删除或注释掉 proxies 配置
+        2. 使用代理：取消注释并修改代理地址
+        """
+        # 代理配置示例（如需使用，请取消注释并修改代理地址）
+        # proxies = {
+        #     "http://": "http://your-proxy-host:port",
+        #     "https://": "http://your-proxy-host:port"
+        # }
+         
+        print("\n=== 普通搜索结果 ===")
+        results = await search(
+            term="python programming",
+            num=10,
+            lang="en"
+        )
+
+        if not results:
+            print("未找到搜索结果")
+            return False
+
+        for i, result in enumerate(results, 1):
+            print(f"\n结果 {i}:")
+            print(f"标题: {result.title}")
+            print(f"链接: {result.url}")
+            print(f"描述: {result.description}")
+            if result.time:
+                print(f"时间: {result.time}")
+            print("-" * 80)
+
+        return True
+    except Exception as e:
+        print(f"普通搜索失败: {str(e)}")
+        return False
+
+async def test_news_search():
+    """测试新闻搜索"""
+    try:
+        print("\n=== 新闻搜索结果 ===")
+        results = await search_news(
+            term="python news",
+            num=5,
+            lang="en"
+        )
+
+        if not results:
+            print("未找到新闻结果")
+            return False
+
+        for i, result in enumerate(results, 1):
+            print(f"\n新闻 {i}:")
+            print(f"标题: {result.title}")
+            print(f"链接: {result.url}")
+            print(f"描述: {result.description}")
+            if result.time:
+                print(f"时间: {result.time}")
+            print("-" * 80)
+
+        return True
+    except Exception as e:
+        print(f"新闻搜索失败: {str(e)}")
+        return False
+
 async def main():
-    # 配置代理（可选）
-    proxies = {
-        "http://": "http://127.0.0.1:10809",
-        "https://": "http://127.0.0.1:10809"
-    }
-
-    # 获取随机域名和User-Agent
-    url = Config.get_random_domain()
-    headers = {"User-Agent": Config.get_random_user_agent()}
-    
-    # 普通搜索
-    results = await search(
-        url=url,
-        headers=headers,
-        term="python site:cnn.com",
-        num=100,
-        tbs="qdr:h",  # 过去一小时的结果
-        proxies=proxies
-    )
-    
-    # 打印搜索结果
-    for result in results:
-        print(f"标题: {result.title}")
-        print(f"链接: {result.url}")
-        print(f"摘要: {result.description}")
-        print(f"时间: {result.time}\n")
-
-    # 新闻搜索
-    news_results = await search_news(
-        url=url,
-        headers=headers,
-        term="python site:cnn.com",
-        num=100,
-        tbs="qdr:d",  # 过去一天的结果
-        proxy=proxies
-    )
-    
-    # 打印新闻搜索结果
-    for result in news_results:
-        print(f"标题: {result.title}")
-        print(f"链接: {result.url}")
-        print(f"摘要: {result.description}")
-        print(f"时间: {result.time}\n")
+    """运行所有测试"""
+    print("开始搜索...\n")
+    await test_search()
+    await test_news_search()
 
 if __name__ == "__main__":
     asyncio.run(main())
+
 ```
+
+### 代理配置说明
+
+1. **不使用代理**
+   - 直接删除或注释掉 proxies 配置
+   - 确保搜索函数中的 proxies/proxy 参数也被注释掉
+
+2. **使用代理**
+   - 取消注释 proxies 配置
+   - 修改代理地址为您的实际代理服务器地址
+   - 取消注释搜索函数中的 proxies/proxy 参数
 
 ### 参数说明
 
@@ -149,6 +190,108 @@ print(headers)  # 输出示例: {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Ma
 如需更新这些列表：
 1. 运行 `fetch_and_save_user_domain.py` 更新域名列表
 2. 运行 `fetch_and_save_user_agents.py` 更新 User-Agent 列表
+
+## 高级搜索语法
+
+> 更多详细的 Google 搜索运算符和高级搜索技巧，请访问 [Google 搜索帮助](https://support.google.com/websearch/answer/2466433)。
+
+### 基础搜索运算符
+
+以下是一些常用的搜索运算符，使用时请注意运算符和搜索词之间不要有空格：
+
+- **精确匹配搜索**：使用引号包围词组，如 `"exact phrase"`
+- **站内搜索**：`site:domain.com keywords`
+- **排除特定词**：使用减号排除词，如 `china -snake`
+- **文件类型**：`filetype:pdf keywords`
+- **标题搜索**：`intitle:keywords`
+- **URL搜索**：`inurl:keywords`
+- **多个条件**：`site:domain.com filetype:pdf keywords`
+
+### 时间范围参数 (tbs)
+
+搜索函数支持以下时间范围参数：
+
+```python
+tbs = {
+    "qdr:h",  # 过去一小时内的结果
+    "qdr:d",  # 过去一天内的结果
+    "qdr:w",  # 过去一周内的结果
+    "qdr:m",  # 过去一月内的结果
+    "qdr:y"   # 过去一年内的结果
+}
+```
+
+### 其他搜索参数
+
+```python
+params = {
+    "hl": "zh-CN",     # 界面语言（例如：zh-CN, en）
+    "lr": "lang_zh",   # 搜索结果语言
+    "safe": "active",  # 安全搜索设置（"active"启用安全搜索）
+    "start": 0,        # 结果起始位置（分页用）
+    "num": 100,        # 返回结果数量（最大100）
+}
+```
+
+### 高级搜索示例
+
+```python
+# 在特定网站中搜索PDF文件
+term = "site:example.com filetype:pdf china programming"
+
+# 搜索特定时间范围内的新闻
+term = "china news site:cnn.com"
+tbs = "qdr:d"  # 过去24小时内的结果
+
+# 精确匹配标题中的短语
+term = 'intitle:"machine learning" site:arxiv.org'
+
+# 排除特定内容
+term = "china programming -beginner -tutorial site:github.com"
+```
+
+### 搜索结果过滤
+
+搜索结果可以按以下类型进行过滤：
+- 网页（Web）
+- 新闻（News）
+- 图片（Images）
+- 视频（Videos）
+
+在我们的库中，已经为不同类型的搜索提供了专门的函数：
+```python
+# 普通网页搜索
+results = await search(...)
+
+# 新闻搜索
+news_results = await search_news(...)
+```
+
+### 搜索技巧
+
+1. **使用多个条件组合**
+   ```python
+   # 在多个特定网站中搜索
+   term = "site:edu.cn OR site:ac.cn machine learning"
+   ```
+
+2. **使用通配符**
+   ```python
+   # 使用星号作为通配符
+   term = "china * programming"
+   ```
+
+3. **使用数字范围**
+   ```python
+   # 搜索特定年份范围
+   term = "china programming 2020..2024"
+   ```
+
+4. **相关词搜索**
+   ```python
+   # 使用波浪号搜索相关词
+   term = "~programming tutorials"
+   ```
 
 ## 配置说明
 

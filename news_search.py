@@ -3,6 +3,7 @@ import asyncio
 import httpx
 from bs4 import BeautifulSoup
 
+from googlesearch.config.config import Config
 from googlesearch.models import SearchResult
 from googlesearch.search import _req
 from googlesearch.utils import deduplicate
@@ -34,18 +35,51 @@ async def parse_news_results(resp_text, deduplicate_results):
     return results
 
 
-async def search_news(url, headers, term, num=20, lang="en", proxy=None, sleep_interval=0,
-                      deduplicate_results=False, **kwargs):
+async def search_news(
+    url=None,
+    headers=None,
+    term="",
+    num=100,
+    lang="en",
+    proxy=None,
+    sleep_interval=0,
+    timeout=10,
+    deduplicate_results=False,
+    **kwargs
+):
+    """
+    执行 Google 新闻搜索
+    
+    Args:
+        url: 搜索域名URL，默认随机选择
+        headers: 请求头，默认随机User-Agent
+        term: 搜索关键词
+        num: 返回结果数量，默认100
+        lang: 搜索语言，默认en
+        proxy: 代理配置
+        sleep_interval: 请求间隔时间
+        timeout: 超时时间
+        deduplicate_results: 是否去重
+        **kwargs: 其他Google搜索参数
+    """
+    # 使用默认配置
+    if url is None:
+        url = Config.get_random_domain()
+    if headers is None:
+        headers = {"User-Agent": Config.get_random_user_agent()}
+
     kwargs["tbm"] = "nws"
+    kwargs["hl"] = lang
     escaped_term = term.replace(' site:', '+site:')
+    
     client_options = {}
     if proxy:
         client_options['proxies'] = proxy
 
     async with httpx.AsyncClient(**client_options, verify=True) as client:
-        resp_text = await _req(url, headers, client, escaped_term, num, lang, **kwargs)
+        resp_text = await _req(url, headers, client, escaped_term, num, timeout, **kwargs)
         if not resp_text:
-            raise ValueError("页面无响应")
+            raise ValueError("No response from page")
         results = await parse_news_results(resp_text, deduplicate_results)
         await asyncio.sleep(sleep_interval)
         return results

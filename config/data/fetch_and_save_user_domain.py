@@ -1,6 +1,7 @@
+from urllib.parse import urlparse
+
 import requests
 from bs4 import BeautifulSoup
-from urllib.parse import urlparse
 
 
 def fetch_domains(url):

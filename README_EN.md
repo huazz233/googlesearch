@@ -45,57 +45,79 @@ Here's a basic example of using the GooglSearch-Tool library:
 
 ```python
 import asyncio
-from googlesearch.config.config import Config
 from googlesearch.search import search
 from googlesearch.news_search import search_news
 
-async def main():
-    # Configure proxy (optional)
-    proxies = {
-        "http://": "http://127.0.0.1:10809",
-        "https://": "http://127.0.0.1:10809"
-    }
+async def test_search():
+    """Test regular search"""
+    try:
+        """
+        Proxy Configuration Notes:
+        1. Without proxy: Simply delete or comment out the proxies configuration
+        2. With proxy: Uncomment and modify the proxy address
+        """
+        # Proxy configuration example (uncomment and modify if needed)
+        # proxies = {
+        #     "http://": "http://your-proxy-host:port",
+        #     "https://": "http://your-proxy-host:port"
+        # }
+         
+        print("\n=== Regular Search Results ===")
+        results = await search(
+            term="python programming",
+            num=10,
+            lang="en"
+        )
 
-    # Get random domain and User-Agent
-    url = Config.get_random_domain()
-    headers = {"User-Agent": Config.get_random_user_agent()}
-    
-    # Regular search
-    results = await search(
-        url=url,
-        headers=headers,
-        term="python site:cnn.com",
-        num=100,
-        tbs="qdr:h",  # Results from the past hour
-        proxies=proxies
-    )
-    
-    # Print search results
-    for result in results:
-        print(f"Title: {result.title}")
-        print(f"URL: {result.url}")
-        print(f"Description: {result.description}")
-        print(f"Time: {result.time}\n")
+        if not results:
+            print("No search results found")
+            return False
 
-    # News search
-    news_results = await search_news(
-        url=url,
-        headers=headers,
-        term="python site:cnn.com",
-        num=100,
-        tbs="qdr:d",  # Results from the past day
-        proxy=proxies
-    )
-    
-    # Print news search results
-    for result in news_results:
-        print(f"Title: {result.title}")
-        print(f"URL: {result.url}")
-        print(f"Description: {result.description}")
-        print(f"Time: {result.time}\n")
+        for i, result in enumerate(results, 1):
+            print(f"\nResult {i}:")
+            print(f"Title: {result.title}")
+            print(f"URL: {result.url}")
+            print(f"Description: {result.description}")
+            if result.time:
+                print(f"Time: {result.time}")
+            print("-" * 80)
+
+        return True
+    except Exception as e:
+        print(f"Regular search failed: {str(e)}")
+        return False
+
+async def test_news_search():
+    """Test news search"""
+    try:
+        print("\n=== News Search Results ===")
+        results = await search_news(
+            term="python news",
+            num=5,
+            lang="en"
+        )
+
+        if not results:
+            print("No news results found")
+            return False
+
+        for i, result in enumerate(results, 1):
+            print(f"\nNews {i}:")
+            print(f"Title: {result.title}")
+            print(f"URL: {result.url}")
+            print(f"Description: {result.description}")
+            if result.time:
+                print(f"Time: {result.time}")
+            print("-" * 80)
+
+        return True
+    except Exception as e:
+        print(f"News search failed: {str(e)}")
+        return False
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    asyncio.run(test_search())
+    asyncio.run(test_news_search())
 ```
 
 ### Parameters
@@ -197,3 +219,107 @@ We will carefully review each PR and provide timely feedback.
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details 
+
+## Advanced Search Syntax
+
+> For more detailed information about Google search operators and advanced search techniques, please visit [Google Search Help](https://support.google.com/websearch/answer/2466433).
+
+### Basic Search Operators
+
+Here are some commonly used search operators. Note: Don't include spaces between the operator and search terms:
+
+- **Exact Match Search**: Use quotes around phrases, e.g., `"exact phrase"`
+- **Site Search**: `site:domain.com keywords`
+- **Exclude Terms**: Use minus sign to exclude words, e.g., `python -snake`
+- **File Type**: `filetype:pdf keywords`
+- **Title Search**: `intitle:keywords`
+- **URL Search**: `inurl:keywords`
+- **Multiple Conditions**: `site:domain.com filetype:pdf keywords`
+
+### Time Range Parameters (tbs)
+
+The search function supports the following time range parameters:
+
+```python
+tbs = {
+    "qdr:h",  # Results from the past hour
+    "qdr:d",  # Results from the past day
+    "qdr:w",  # Results from the past week
+    "qdr:m",  # Results from the past month
+    "qdr:y"   # Results from the past year
+}
+```
+
+### Other Search Parameters
+
+```python
+params = {
+    "hl": "en",        # Interface language (e.g., en, zh-CN)
+    "lr": "lang_en",   # Search results language
+    "safe": "active",  # Safe search setting ("active" enables safe search)
+    "start": 0,        # Starting position for results (for pagination)
+    "num": 100,        # Number of results to return (max 100)
+}
+```
+
+### Advanced Search Examples
+
+```python
+# Search for PDF files on specific website
+term = "site:example.com filetype:pdf python programming"
+
+# Search for news within specific time range
+term = "python news site:cnn.com"
+tbs = "qdr:d"  # Results from past 24 hours
+
+# Exact match in title
+term = 'intitle:"machine learning" site:arxiv.org'
+
+# Exclude specific content
+term = "python programming -beginner -tutorial site:github.com"
+```
+
+### Search Result Filtering
+
+Search results can be filtered by the following types:
+- Web
+- News
+- Images
+- Videos
+
+Our library provides dedicated functions for different types of searches:
+```python
+# Regular web search
+results = await search(...)
+
+# News search
+news_results = await search_news(...)
+```
+
+### Search Tips
+
+1. **Using Multiple Conditions**
+   ```python
+   # Search across multiple specific sites
+   term = "site:edu.gov OR site:org.gov machine learning"
+   ```
+
+2. **Using Wildcards**
+   ```python
+   # Use asterisk as wildcard
+   term = "python * programming"
+   ```
+
+3. **Using Number Ranges**
+   ```python
+   # Search within specific year range
+   term = "python programming 2020..2024"
+   ```
+
+4. **Related Terms Search**
+   ```python
+   # Use tilde for related terms
+   term = "~programming tutorials"
+   ```
+
+For more detailed information about Google search operators and advanced search techniques, please visit [Google Search Help](https://support.google.com/websearch/answer/2466433). 
