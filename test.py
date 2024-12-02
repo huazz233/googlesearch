@@ -5,9 +5,15 @@ from googlesearch.search import search
 
 
 async def test_search():
-    """测试普通搜索"""
+    """
+    测试普通搜索
+    Test regular search
+
+    Returns:
+        bool: 搜索是否成功 / Whether search was successful
+    """
     try:
-        print("\n=== 普通搜索结果 ===")
+        print("\n=== 普通搜索结果 / Regular Search Results ===")
         results = await search(
             term="python programming",
             num=10,
@@ -15,28 +21,34 @@ async def test_search():
         )
 
         if not results:
-            print("未找到搜索结果")
+            print("未找到搜索结果 / No search results found")
             return False
 
         for i, result in enumerate(results, 1):
-            print(f"\n结果 {i}:")
-            print(f"标题: {result.title}")
-            print(f"链接: {result.url}")
-            print(f"描述: {result.description}")
+            print(f"\n结果 {i} / Result {i}:")
+            print(f"标题/Title: {result.title}")
+            print(f"链接/URL: {result.url}")
+            print(f"描述/Description: {result.description}")
             if result.time:
-                print(f"时间: {result.time}")
+                print(f"时间/Time: {result.time}")
             print("-" * 80)
 
         return True
     except Exception as e:
-        print(f"普通搜索失败: {str(e)}")
+        print(f"普通搜索失败 / Regular search failed: {str(e)}")
         return False
 
 
 async def test_news_search():
-    """测试新闻搜索"""
+    """
+    测试新闻搜索
+    Test news search
+
+    Returns:
+        bool: 搜索是否成功 / Whether search was successful
+    """
     try:
-        print("\n=== 新闻搜索结果 ===")
+        print("\n=== 新闻搜索结果 / News Search Results ===")
         results = await search_news(
             term="python news",
             num=5,
@@ -44,29 +56,30 @@ async def test_news_search():
         )
 
         if not results:
-            print("未找到新闻结果")
+            print("未找到新闻结果 / No news results found")
             return False
 
         for i, result in enumerate(results, 1):
-            print(f"\n新闻 {i}:")
-            print(f"标题: {result.title}")
-            print(f"链接: {result.url}")
-            print(f"描述: {result.description}")
+            print(f"\n新闻 {i} / News {i}:")
+            print(f"标题/Title: {result.title}")
+            print(f"链接/URL: {result.url}")
+            print(f"描述/Description: {result.description}")
             if result.time:
-                print(f"时间: {result.time}")
+                print(f"时间/Time: {result.time}")
             print("-" * 80)
 
         return True
     except Exception as e:
-        print(f"新闻搜索失败: {str(e)}")
+        print(f"新闻搜索失败 / News search failed: {str(e)}")
         return False
 
 
 async def main():
-    """运行所有测试"""
-    print("开始搜索...\n")
-
-    # 运行搜索
+    """
+    运行所有测试
+    Run all tests
+    """
+    print("开始搜索... / Starting search...\n")
     await test_search()
     await test_news_search()
 

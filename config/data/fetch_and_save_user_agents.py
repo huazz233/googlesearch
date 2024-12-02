@@ -3,7 +3,17 @@ from bs4 import BeautifulSoup
 
 
 def fetch_useragents(url):
-    # 发送HTTP GET请求获取网页内容
+    """
+    从指定URL获取User-Agent列表
+    Fetch User-Agent list from specified URL
+
+    Args:
+        url (str): 目标网页URL / Target webpage URL
+
+    Returns:
+        list: User-Agent字符串列表 / List of User-Agent strings
+    """
+    # 发送HTTP GET请求获取网页内容 / Send HTTP GET request to get webpage content
     response = requests.get(url)
     # 确保请求成功
     if response.status_code != 200:
@@ -29,6 +39,14 @@ def fetch_useragents(url):
 
 
 def save_useragents_to_file(useragents, file_path):
+    """
+    将User-Agent列表保存到文件
+    Save User-Agent list to file
+
+    Args:
+        useragents (list): User-Agent列表 / List of User-Agents
+        file_path (str): 保存文件路径 / Save file path
+    """
     # 将标题和 User-Agent 写入文件
     with open(file_path, 'w') as file:
         for useragent in useragents:

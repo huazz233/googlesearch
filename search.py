@@ -2,29 +2,53 @@ import asyncio
 
 import httpx
 from bs4 import BeautifulSoup
-
 from googlesearch.config.config import Config
 from googlesearch.models import SearchResult
 from googlesearch.utils import deduplicate, clean_description
 
 
 async def _req(url, headers, client, term, num_results, timeout, **kwargs):
+    """
+    发送搜索请求
+    Send search request
+
+    Args:
+        url (str): 请求URL / Request URL
+        headers (dict): 请求头 / Request headers
+        client (httpx.AsyncClient): HTTP客户端 / HTTP client
+        term (str): 搜索词 / Search term
+        num_results (int): 结果数量 / Number of results
+        timeout (int): 超时时间 / Timeout duration
+        **kwargs: 其他参数 / Additional parameters
+
+    Returns:
+        str: 响应文本 / Response text
+    """
     params = {
         "q": term,
         "num": num_results,
         "start": 0,
-        "biw": 1692,  # 指定窗口高度，宽度
-        "bih": 856,
+        "biw": 1692,  # 指定窗口高度 / Specify window height
+        "bih": 856,   # 指定窗口宽度 / Specify window width
         **{k: v for k, v in kwargs.items()}
     }
-    # print(f"请求 URL: {url}")
-    # print(f"请求参数: {params}")
     resp = await client.get(url, headers=headers, params=params, timeout=timeout)
     resp.raise_for_status()
     return resp.text
 
 
 async def parse_results(resp_text, deduplicate_results):
+    """
+    解析搜索结果
+    Parse search results
+
+    Args:
+        resp_text (str): 响应文本 / Response text
+        deduplicate_results (bool): 是否去重 / Whether to deduplicate
+
+    Returns:
+        List[SearchResult]: 搜索结果列表 / List of search results
+    """
     results = []
     soup = BeautifulSoup(resp_text, "html.parser")
 
