@@ -54,11 +54,20 @@ jobs:
         echo "\n已安装的包 / Installed packages:"
         pip list
         
-    - name: Update data files
+    - name: Prepare data directory
       run: |
         # 确保目录存在 / Ensure directory exists
         mkdir -p config/data
         
+        # 复制所需文件到工作目录 / Copy required files to working directory
+        cp -f config/data/*.py config/data/ || echo "警告：无法复制 Python 文件 / Warning: Cannot copy Python files"
+        cp -f config/data/*.txt config/data/ || echo "警告：无法复制数据文件 / Warning: Cannot copy data files"
+        
+        # 检查文件权限 / Check file permissions
+        ls -la config/data/
+        
+    - name: Update data files
+      run: |
         # 检查所需文件 / Check required files
         required_files=(
           "update_data.py"
