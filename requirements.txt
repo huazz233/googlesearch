@@ -1,0 +1,9 @@
+# 基础依赖 / Basic dependencies
+requests>=2.31.0
+beautifulsoup4>=4.12.2
+lxml>=4.9.3  # 用于 BeautifulSoup 的 HTML 解析器 / HTML parser for BeautifulSoup
+
+# 开发依赖 / Development dependencies
+pytest>=7.4.0  # 用于测试 / For testing
+black>=23.7.0  # 代码格式化 / Code formatting
+flake8>=6.1.0  # 代码检查 / Code linting 
