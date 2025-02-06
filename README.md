@@ -168,9 +168,31 @@ Domain lists and User-Agent lists are stored in the `config/data` directory:
 - `all_domain.txt`: Contains all available Google search domains
 - `user_agents.txt`: Contains the latest Chrome User-Agent list
 
-To update these lists:
-1. Run `fetch_and_save_user_domain.py` to update the domain list
-2. Run `fetch_and_save_user_agents.py` to update the User-Agent list
+There are three ways to update these lists:
+
+#### 1. Manual Update of Individual Files
+- Run `fetch_and_save_user_domain.py` to update the domain list
+- Run `fetch_and_save_user_agents.py` to update the User-Agent list
+- Run `check_domains.py` to check domain availability
+
+#### 2. Manual Update of All Data
+Run the `update_data.py` script to update all data at once:
+```bash
+python config/data/update_data.py
+```
+
+#### 3. Automatic Update via GitHub Actions
+We have configured a GitHub Actions workflow to automatically update the data:
+- Runs automatically every day at UTC 0:00
+- Can be manually triggered from the Actions page of the GitHub repository
+- Automatically commits and pushes changes to the repository
+- Update logs and status can be viewed on the Actions page
+
+Automatic update process:
+1. Updates User-Agent list
+2. Updates Google domain list
+3. Checks domain availability
+4. Automatically commits and pushes changes if any
 
 ## Configuration
 

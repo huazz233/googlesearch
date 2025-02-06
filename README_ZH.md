@@ -214,15 +214,35 @@ print(headers)  # Example output / 输出示例: {'User-Agent': 'Mozilla/5.0 (Ma
 
 ### Domain and User-Agent Updates / 域名和 User-Agent 更新
 
-Domain lists and User-Agent lists are stored in the `config/data` directory:
 域名列表和 User-Agent 列表存储在 `config/data` 目录下：
-- `all_domain.txt`: Contains all available Google search domains / 包含所有可用的 Google 搜索域名
-- `user_agents.txt`: Contains the latest Chrome User-Agent list / 包含最新的 Chrome User-Agent 列表
+- `all_domain.txt`: 包含所有可用的 Google 搜索域名
+- `user_agents.txt`: 包含最新的 Chrome User-Agent 列表
 
-To update these lists:
-如需更新这些列表：
-1. Run `fetch_and_save_user_domain.py` to update domain list / 运行 `fetch_and_save_user_domain.py` 更新域名列表
-2. Run `fetch_and_save_user_agents.py` to update User-Agent list / 运行 `fetch_and_save_user_agents.py` 更新 User-Agent 列表
+更新这些列表有三种方式：
+
+#### 1. 手动更新单个文件
+- 运行 `fetch_and_save_user_domain.py` 更新域名列表
+- 运行 `fetch_and_save_user_agents.py` 更新 User-Agent 列表
+- 运行 `check_domains.py` 检查域名可用性
+
+#### 2. 手动更新所有数据
+运行 `update_data.py` 脚本可以一次性更新所有数据：
+```bash
+python config/data/update_data.py
+```
+
+#### 3. GitHub Actions 自动更新
+我们配置了 GitHub Actions 工作流来自动更新数据：
+- 每天 UTC 0:00（北京时间 8:00）自动运行
+- 可以在 GitHub 仓库的 Actions 页面手动触发更新
+- 更新后会自动提交变更并推送到仓库
+- 可以在 Actions 页面查看更新日志和状态
+
+自动更新流程：
+1. 更新 User-Agent 列表
+2. 更新 Google 域名列表
+3. 检查域名可用性
+4. 如有变更，自动提交并推送到仓库
 
 ## Advanced Search Syntax / 高级搜索语法
 

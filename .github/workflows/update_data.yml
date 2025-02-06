@@ -1,0 +1,50 @@
+name: Update Data
+
+on:
+  schedule:
+    - cron: '0 0 * * *'  # 每天 UTC 0:00 运行 / Run every day at UTC 0:00
+  workflow_dispatch:      # 允许手动触发 / Allow manual trigger
+
+jobs:
+  update-data:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.10'
+        
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install requests beautifulsoup4
+        
+    - name: Update data files
+      run: |
+        python config/data/update_data.py
+        
+    - name: Check for changes
+      id: check_changes
+      run: |
+        git diff --quiet || echo "changes=true" >> $GITHUB_OUTPUT
+        
+    - name: Commit and push if changes
+      if: steps.check_changes.outputs.changes == 'true'
+      run: |
+        git config --local user.email "github-actions[bot]@users.noreply.github.com"
+        git config --local user.name "github-actions[bot]"
+        git add config/data/all_domain.txt config/data/user_agents.txt
+        current_date=$(date '+%Y-%m-%d')
+        git commit -m "chore: 自动更新数据文件 / Auto-update data files [$current_date]
+
+        🤖 自动更新说明 / Auto-update Description:
+        - 更新 User-Agent 列表 / Update User-Agent list
+        - 更新 Google 域名列表 / Update Google domain list
+        - 检查域名可用性 / Check domain availability
+
+        [skip ci]"
+        git push 
