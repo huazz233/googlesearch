@@ -6,6 +6,7 @@
 """
 import requests
 from bs4 import BeautifulSoup
+import sys
 
 
 def fetch_useragents(url):
@@ -54,6 +55,9 @@ def save_useragents_to_file(useragents, file_path):
     Args:
         useragents (list): User-Agent 列表 / List of User-Agents
         file_path (str): 保存文件路径 / Save file path
+
+    Returns:
+        bool: 是否保存成功 / Whether save successful
     """
     try:
         # 去重并保持顺序 / Remove duplicates while preserving order
@@ -63,6 +67,9 @@ def save_useragents_to_file(useragents, file_path):
         with open(file_path, 'w', encoding='utf-8') as file:
             for useragent in unique_useragents:
                 file.write(f"{useragent}\n")
+
+        print(f"User-Agents saved successfully to {file_path}")
+        print(f"Total unique User-Agents: {len(set(unique_useragents))}")
         return True
     except Exception as e:
         print(f"Error saving User-Agents to file: {str(e)}")
@@ -73,6 +80,9 @@ def main():
     """
     获取并保存 User-Agent 的主函数
     Main function to fetch and save User-Agents
+
+    Returns:
+        bool: 是否执行成功 / Whether execution successful
     """
     # 指定 User-Agent 来源 / User-Agent sources
     urls = [
@@ -88,15 +98,13 @@ def main():
         useragents = fetch_useragents(url)
         all_useragents.extend(useragents)
 
-    if all_useragents:
-        if save_useragents_to_file(all_useragents, file_path):
-            print(f"User-Agents saved successfully to {file_path}")
-            print(f"Total unique User-Agents: {len(set(all_useragents))}")
-        else:
-            print("Failed to save User-Agents")
-    else:
+    if not all_useragents:
         print("No User-Agents were fetched")
+        return False
+
+    return save_useragents_to_file(all_useragents, file_path)
 
 
 if __name__ == "__main__":
-    main()
+    success = main()
+    sys.exit(0 if success else 1)
