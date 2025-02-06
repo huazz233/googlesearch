@@ -1,44 +1,44 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+@Description: 获取并保存最新的 Chrome User-Agent
+@Author: huazz
+"""
 import requests
 from bs4 import BeautifulSoup
 
 
 def fetch_useragents(url):
     """
+    从指定 URL 获取 User-Agent 列表
     Fetch User-Agent list from specified URL
-    从指定URL获取User-Agent列表
 
     Args:
-        url (str): Target webpage URL / 目标网页URL
+        url (str): 目标网页 URL / Target webpage URL
 
     Returns:
-        list: List of User-Agent strings / User-Agent字符串列表
+        list: User-Agent 字符串列表 / List of User-Agent strings
     """
     try:
-        # Send HTTP GET request to get webpage content / 发送HTTP GET请求获取网页内容
+        # 发送 HTTP GET 请求获取网页内容 / Send HTTP GET request
         headers = {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
         }
         response = requests.get(url, headers=headers, timeout=10)
         response.raise_for_status()
 
-        # Parse webpage content using BeautifulSoup / 使用BeautifulSoup解析网页内容
+        # 使用 BeautifulSoup 解析网页内容 / Parse webpage content
         soup = BeautifulSoup(response.text, 'html.parser')
 
-        # Find all User-Agent strings / 查找所有User-Agent字符串
+        # 查找所有 User-Agent 字符串 / Find all User-Agent strings
         useragent_values = []
         
-        # Different parsing logic for different sources / 针对不同来源使用不同的解析逻辑
-        if 'useragents.me' in url:
-            for item in soup.find_all('div', class_='useragent'):
-                ua = item.get_text(strip=True)
-                if 'Chrome' in ua and 'Mobile' not in ua:
-                    useragent_values.append(ua)
-        elif 'whatmyuseragent.com' in url:
-            rows = soup.find_all('tr')
-            for row in rows:
-                cols = row.find_all('td')
-                if len(cols) >= 3 and cols[2].get_text(strip=True) == 'desktop':
-                    useragent_values.append(cols[0].get_text(strip=True))
+        # 解析 whatmyuseragent.com 的数据 / Parse data from whatmyuseragent.com
+        rows = soup.find_all('tr')
+        for row in rows:
+            cols = row.find_all('td')
+            if len(cols) >= 3 and cols[2].get_text(strip=True) == 'desktop':
+                useragent_values.append(cols[0].get_text(strip=True))
 
         return useragent_values
     except Exception as e:
@@ -48,18 +48,18 @@ def fetch_useragents(url):
 
 def save_useragents_to_file(useragents, file_path):
     """
+    将 User-Agent 列表保存到文件
     Save User-Agent list to file
-    将User-Agent列表保存到文件
 
     Args:
-        useragents (list): List of User-Agents / User-Agent列表
-        file_path (str): Save file path / 保存文件路径
+        useragents (list): User-Agent 列表 / List of User-Agents
+        file_path (str): 保存文件路径 / Save file path
     """
     try:
-        # Remove duplicates while preserving order / 去重并保持顺序
+        # 去重并保持顺序 / Remove duplicates while preserving order
         unique_useragents = list(dict.fromkeys(useragents))
         
-        # Write User-Agents to file / 将User-Agent写入文件
+        # 将 User-Agent 写入文件 / Write User-Agents to file
         with open(file_path, 'w', encoding='utf-8') as file:
             for useragent in unique_useragents:
                 file.write(f"{useragent}\n")
@@ -71,12 +71,11 @@ def save_useragents_to_file(useragents, file_path):
 
 def main():
     """
+    获取并保存 User-Agent 的主函数
     Main function to fetch and save User-Agents
-    获取并保存User-Agent的主函数
     """
-    # Multiple sources for User-Agents / 多个User-Agent来源
+    # 指定 User-Agent 来源 / User-Agent sources
     urls = [
-        'https://www.useragents.me/chrome',
         'https://whatmyuseragent.com/browser/ch/chrome/',
         'https://whatmyuseragent.com/browser/ch/chrome/127'
     ]
@@ -84,7 +83,7 @@ def main():
     file_path = 'user_agents.txt'
     all_useragents = []
 
-    # Fetch from all sources / 从所有来源获取
+    # 从所有来源获取 / Fetch from all sources
     for url in urls:
         useragents = fetch_useragents(url)
         all_useragents.extend(useragents)
