@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-@Description: 自动更新 data 目录下的数据文件
+@Description: 自动更新 data 目录下的数据文件（每7天更新一次）
 @Author: huazz
 """
 import os
@@ -39,8 +39,8 @@ def setup_environment():
 
 def update_all_data():
     """
-    更新所有数据文件
-    Update all data files
+    更新所有数据文件（每7天更新一次）
+    Update all data files (every 7 days)
     """
     try:
         # 记录开始时间 / Record start time
@@ -49,13 +49,19 @@ def update_all_data():
 
         # 1. 更新 User-Agents
         logging.info("1. 开始更新 User-Agents / Starting User-Agents update...")
-        if not update_user_agents():
+        result = update_user_agents()
+        if result:
+            logging.info("User-Agents 更新成功 / User-Agents update successful")
+        else:
             logging.error("更新 User-Agents 失败 / Failed to update User-Agents")
             return False
         
         # 2. 更新 Google 域名列表
         logging.info("2. 开始更新 Google 域名列表 / Starting Google domain list update...")
-        if not update_domains():
+        result = update_domains()
+        if result:
+            logging.info("域名列表更新成功 / Domain list update successful")
+        else:
             logging.error("更新域名列表失败 / Failed to update domain list")
             return False
 
