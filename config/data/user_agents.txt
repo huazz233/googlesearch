@@ -1,12 +1,9 @@
-Mozilla/5.0 (Macintosh; Intel Mac OS X 11_5_2) AppleWebKit/535.3 (KHTML, like Gecko) Chrome/12.0.1531.32 Safari/536.9
-Mozilla/5.0 (Macintosh; Intel Mac OS X 10_0_0) AppleWebKit/537.10 (KHTML, like Gecko) Chrome/7.0.1341.66 Safari/537.2
-Mozilla/5.0 (Macintosh; Intel Mac OS X 10_2_1) AppleWebKit/537.19 (KHTML, like Gecko) Chrome/10.0.365.88 Safari/537.28
-Mozilla/5.0 (Macintosh; Intel Mac OS X 10_4_2) AppleWebKit/536.3 (KHTML, like Gecko) Chrome/12.0.1593.39 Safari/537.36
-Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.15 (KHTML, like Gecko) Chrome/12.0.511.49 Safari/535.9
-Mozilla/5.0 (Windows NT.6.2; Win64; x64) AppleWebKit/535.5 (KHTML, like Gecko) Chrome/9.0.1906.42 Safari/536.10
-Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/535.36 (KHTML, like Gecko) Chrome/11.0.779.60 Safari/535.22
-Mozilla/5.0 (Macintosh; Intel Mac OS X 10_2_2) AppleWebKit/536.9 (KHTML, like Gecko) Chrome/8.0.345.7 Safari/536.23
-Mozilla/5.0 (Macintosh; Intel Mac OS X 11_0_2) AppleWebKit/537.4 (KHTML, like Gecko) Chrome/12.0.804.39 Safari/537.33
+Mozilla/5.0 (Macintosh; Intel Mac OS X 15_3_2) AppleWebKit/621.1.2.111.4 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/621.1.2.111.4
+Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/[134.0.0.0](http://134.0.0.0/)Safari/537.36
+Mozilla/5.0 (Macintosh; Intel Mac OS X 11_6_3) AppleWebKit/536.8 (KHTML, like Gecko) Chrome/9.0.1018.97 Safari/536.26
+Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/535.20 (KHTML, like Gecko) Chrome/6.0.1341.64 Safari/536.17
+Mozilla/5.0 (Linux x86_64; X11) AppleWebKit/537.28 (KHTML, like Gecko) Chrome/10.0.1764.97 Safari/536.25
+Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/536.2 (KHTML, like Gecko) Chrome/11.0.385.98 Safari/537.24
 Mozilla/5.0 (Kubuntu; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36
 Mozilla/5.0 (CentOS; Linux i686) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36
 Mozilla/5.0 (Knoppix; Linux i686) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36
