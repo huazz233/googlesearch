@@ -1,9 +1,6 @@
-Mozilla/5.0 (Macintosh; Intel Mac OS X 15_3_2) AppleWebKit/621.1.2.111.4 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/621.1.2.111.4
-Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/[134.0.0.0](http://134.0.0.0/)Safari/537.36
-Mozilla/5.0 (Macintosh; Intel Mac OS X 11_6_3) AppleWebKit/536.8 (KHTML, like Gecko) Chrome/9.0.1018.97 Safari/536.26
-Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/535.20 (KHTML, like Gecko) Chrome/6.0.1341.64 Safari/536.17
-Mozilla/5.0 (Linux x86_64; X11) AppleWebKit/537.28 (KHTML, like Gecko) Chrome/10.0.1764.97 Safari/536.25
-Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/536.2 (KHTML, like Gecko) Chrome/11.0.385.98 Safari/537.24
+Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.5938 Safari/537.36
+Mozilla/5.0 (Macintosh; Intel Mac OS X 11_7_1) AppleWebKit/537.33 (KHTML, like Gecko) Chrome/7.0.1241.93 Safari/537.23
+Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36
 Mozilla/5.0 (Kubuntu; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36
 Mozilla/5.0 (CentOS; Linux i686) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36
 Mozilla/5.0 (Knoppix; Linux i686) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36
@@ -19,7 +16,3 @@ Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko)
 Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.6533.99 Safari/537.36 TeslaMusic/develop-2024.44.32.1-7-ee93da10a3
 Mozilla/5.0 (Windows NT 8.1; Win64; x64) AppleWebKit/539.41 (KHTML, like Gecko) Chrome/127.0.7358.345 Safari/539.41
 Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.6533.99 Safari/537.36 TeslaMusic/terminal-das-fsd-eap-13-2-3-35441-6c2465ee9c
-Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.6533.101 Safari/537.36
-Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/127.0.0.0 Safari/537.3
-Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.6533.120 Safari/537.36
-Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.5304.63 Safari/537.36
