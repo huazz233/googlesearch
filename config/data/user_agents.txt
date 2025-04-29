@@ -1,7 +1,7 @@
-Mozilla/5.0 (Macintosh; Intel Mac OS X 11_5_4) AppleWebKit/536.15 (KHTML, like Gecko) Chrome/10.0.1976.55 Safari/537.19
-Mozilla/5.0 (Macintosh; Intel Mac OS X 10_1_5) AppleWebKit/535.2 (KHTML, like Gecko) Chrome/6.0.1251.29 Safari/536.25
-Mozilla/5.0 (Macintosh; Intel Mac OS X 15_4_0; Silicon; Valve Steam Client/default/0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.6478.183 Safari/537.36
-Mozilla/5.0 (Windows NT.6.2; WOW64) AppleWebKit/535.7 (KHTML, like Gecko) Chrome/6.0.1499.0 Safari/536.30
+Mozilla/5.0 (Windows; U; Windows NT 5.1; fr-FR) AppleWebKit/525.13 (KHTML, like Gecko) Chrome/0.A.B.C Safari/525.13
+Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 Chrome/117.0.0.0 Safari/537.36
+Mozilla/5.0 (Windows; U; Windows NT 5.1; de-DE) AppleWebKit/525.13 (KHTML, like Gecko) Chrome/0.A.B.C Safari/525.13
+Mozilla/5.0 (Windows; U; Windows NT 5.1; ar-EG) AppleWebKit/525.13 (KHTML, like Gecko) Chrome/0.A.B.C Safari/525.13
 Mozilla/5.0 (Kubuntu; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36
 Mozilla/5.0 (CentOS; Linux i686) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36
 Mozilla/5.0 (Knoppix; Linux i686) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36
