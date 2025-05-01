@@ -1,7 +1,7 @@
+Mozilla/5.0 (Windows NT 12.0; Win32; x32) AppleWebKit/553.90 (KHTML, like Gecko) Chrome/117.0.8089.225 Safari/553.90
+Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/2.0.0.0 Safari/537.36
+Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/.0.0.0 Safari/537.36
 Mozilla/5.0 (Windows; U; Windows NT 5.1; fr-FR) AppleWebKit/525.13 (KHTML, like Gecko) Chrome/0.A.B.C Safari/525.13
-Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 Chrome/117.0.0.0 Safari/537.36
-Mozilla/5.0 (Windows; U; Windows NT 5.1; de-DE) AppleWebKit/525.13 (KHTML, like Gecko) Chrome/0.A.B.C Safari/525.13
-Mozilla/5.0 (Windows; U; Windows NT 5.1; ar-EG) AppleWebKit/525.13 (KHTML, like Gecko) Chrome/0.A.B.C Safari/525.13
 Mozilla/5.0 (Kubuntu; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36
 Mozilla/5.0 (CentOS; Linux i686) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36
 Mozilla/5.0 (Knoppix; Linux i686) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36
