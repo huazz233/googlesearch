@@ -36,7 +36,7 @@
 Install `googlesearch-tool` via `pip`:
 
 ```bash
-pip install googlesearch-tool
+pip install --upgrade  googlesearch-tool
 ```
 
 ## Quick Start
