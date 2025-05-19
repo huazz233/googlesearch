@@ -13,11 +13,16 @@ async def test_search():
         bool: 搜索是否成功 / Whether search was successful
     """
     try:
+        # 代理配置示例（如需使用，请取消注释并修改代理地址）
+        # Proxy configuration example (uncomment and modify if needed)
+        # proxy = "http://your-proxy-host:port"
+
         print("\n=== 普通搜索结果 / Regular Search Results ===")
         results = await search(
             term="python programming",
             num=10,
             lang="en"
+            # proxy=proxy  # 取消注释以使用代理 / Uncomment to use proxy
         )
 
         if not results:
@@ -53,6 +58,7 @@ async def test_news_search():
             term="python news",
             num=5,
             lang="en"
+            # proxy="http://your-proxy-host:port"  # 取消注释并修改代理地址 / Uncomment and modify if needed
         )
 
         if not results:

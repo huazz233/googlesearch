@@ -72,23 +72,21 @@ async def test_search():
     try:
         """
         Proxy configuration notes / 代理配置说明：
-        1. Without proxy: Delete or comment out proxies configuration
-           不使用代理：直接删除或注释掉 proxies 配置
+        1. Without proxy: Delete or comment out proxy configuration
+           不使用代理：直接删除或注释掉 proxy 配置
         2. With proxy: Uncomment and modify proxy address
            使用代理：取消注释并修改代理地址
         """
         # Proxy configuration example (uncomment and modify if needed)
         # 代理配置示例（如需使用，请取消注释并修改代理地址）
-        # proxies = {
-        #     "http://": "http://your-proxy-host:port",
-        #     "https://": "http://your-proxy-host:port"
-        # }
+        # proxy = "http://your-proxy-host:port"
          
         print("\n=== Regular Search Results / 普通搜索结果 ===")
         results = await search(
             term="python programming",
             num=10,
-            lang="en"
+            lang="en",
+            # proxy=proxy  # Uncomment to use proxy / 取消注释以使用代理
         )
 
         if not results:
@@ -116,7 +114,8 @@ async def test_news_search():
         results = await search_news(
             term="python news",
             num=5,
-            lang="en"
+            lang="en",
+            # proxy="http://your-proxy-host:port"  # Uncomment and modify if needed / 取消注释并修改代理地址
         )
 
         if not results:
@@ -150,15 +149,15 @@ if __name__ == "__main__":
 ### Proxy Configuration / 代理配置说明
 
 1. **Without Proxy / 不使用代理**
-   - Delete or comment out proxies configuration
-   - Make sure proxies/proxy parameters in search functions are also commented out
-   - 直接删除或注释掉 proxies 配置
-   - 确保搜索函数中的 proxies/proxy 参数也被注释掉
+   - Delete or comment out proxy configuration
+   - Make sure proxy parameters in search functions are also commented out
+   - 直接删除或注释掉 proxy 配置
+   - 确保搜索函数中的 proxy 参数也被注释掉
 
 2. **With Proxy / 使用代理**
-   - Uncomment proxies configuration
+   - Uncomment proxy configuration
    - Modify proxy address to your actual proxy server address
-   - 取消注释 proxies 配置
+   - 取消注释 proxy 配置
    - 修改代理地址为您的实际代理服务器地址
 
 ### Parameter Description / 参数说明
@@ -178,7 +177,7 @@ if __name__ == "__main__":
   - `qdr:w` - Past week / 过去一周
   - `qdr:m` - Past month / 过去一月
   - `qdr:y` - Past year / 过去一年
-- `proxies`: Proxy configuration (optional)
+- `proxy`: Proxy configuration (optional)
   代理配置（可选）
 - `timeout`: Request timeout in seconds
   请求超时时间（秒）

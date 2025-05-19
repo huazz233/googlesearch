@@ -99,7 +99,7 @@ async def search(
     term="",
     num=100,
     lang="en",
-    proxies=None,
+    proxy=None,
     sleep_interval=0,
     timeout=10,
     deduplicate_results=False,
@@ -107,20 +107,21 @@ async def search(
 ):
     """
     执行 Google 搜索
+    Perform Google search
     
     Args:
-        url: 搜索域名URL，默认随机选择
-        headers: 请求头，默认随机User-Agent
-        term: 搜索关键词
-        num: 返回结果数量，默认100
-        lang: 搜索语言，默认en
-        proxies: 代理配置
-        sleep_interval: 请求间隔时间
-        timeout: 超时时间
-        deduplicate_results: 是否去重
-        **kwargs: 其他Google搜索参数
+        url: 搜索域名URL，默认随机选择 / Search domain URL, random by default
+        headers: 请求头，默认随机User-Agent / Request headers, random User-Agent by default
+        term: 搜索关键词 / Search term
+        num: 返回结果数量，默认100 / Number of results to return, default 100
+        lang: 搜索语言，默认en / Search language, default en
+        proxy: 代理配置 / Proxy configuration
+        sleep_interval: 请求间隔时间 / Request interval time
+        timeout: 超时时间 / Timeout duration
+        deduplicate_results: 是否去重 / Whether to deduplicate
+        **kwargs: 其他Google搜索参数 / Additional Google search parameters
     """
-    # 使用默认配置
+    # 使用默认配置 / Use default configuration
     if url is None:
         url = Config.get_random_domain()
     if headers is None:
@@ -130,8 +131,8 @@ async def search(
     escaped_term = term.replace(' site:', '+site:')
     
     client_options = {}
-    if proxies:
-        client_options['proxies'] = proxies
+    if proxy:
+        client_options['proxy'] = proxy
 
     async with httpx.AsyncClient(**client_options) as client:
         resp_text = await _req(url, headers, client, escaped_term, num, timeout, **kwargs)

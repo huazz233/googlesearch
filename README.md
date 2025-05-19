@@ -53,20 +53,18 @@ async def test_search():
     try:
         """
         Proxy Configuration Notes:
-        1. Without proxy: Simply delete or comment out the proxies configuration
+        1. Without proxy: Simply delete or comment out the proxy configuration
         2. With proxy: Uncomment and modify the proxy address
         """
         # Proxy configuration example (uncomment and modify if needed)
-        # proxies = {
-        #     "http://": "http://your-proxy-host:port",
-        #     "https://": "http://your-proxy-host:port"
-        # }
+        # proxy = "http://your-proxy-host:port"
          
         print("\n=== Regular Search Results ===")
         results = await search(
             term="python programming",
             num=10,
-            lang="en"
+            lang="en",
+            # proxy=proxy  # Uncomment to use proxy
         )
 
         if not results:
@@ -94,7 +92,8 @@ async def test_news_search():
         results = await search_news(
             term="python news",
             num=5,
-            lang="en"
+            lang="en",
+            # proxy="http://your-proxy-host:port"  # Uncomment and modify if needed
         )
 
         if not results:
@@ -132,7 +131,7 @@ if __name__ == "__main__":
   - `qdr:w` - Past week
   - `qdr:m` - Past month
   - `qdr:y` - Past year
-- `proxies`: Proxy configuration (optional)
+- `proxy`: Proxy configuration (optional)
 - `timeout`: Request timeout in seconds
 
 ### Result Object
