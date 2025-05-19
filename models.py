@@ -8,10 +8,10 @@ class SearchResult:
     Search result data class
     
     Attributes:
-        url (str): 搜索结果的URL链接 / URL link of the search result
-        title (str): 搜索结果的标题 / Title of the search result
-        description (str): 搜索结果的描述内容 / Description content of the search result
-        time (Optional[str]): 搜索结果的时间戳（可选） / Timestamp of the search result (optional)
+        url (str): 结果URL / Result URL
+        title (str): 结果标题 / Result title
+        description (str): 结果描述 / Result description
+        time (Optional[str]): 结果时间信息，可选 / Result time information, optional
     """
     url: str
     title: str

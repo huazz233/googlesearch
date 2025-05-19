@@ -1,45 +1,48 @@
 import re
-from typing import List
+from typing import List, Set
 
 from googlesearch.models import SearchResult
 
 
 def deduplicate(results: List[SearchResult]) -> List[SearchResult]:
     """
-    去重搜索结果
+    对搜索结果进行去重
     Deduplicate search results
-
+    
     Args:
         results (List[SearchResult]): 搜索结果列表 / List of search results
-
+        
     Returns:
-        List[SearchResult]: 去重后的结果列表 / Deduplicated results list
+        List[SearchResult]: 去重后的搜索结果列表 / Deduplicated list of search results
     """
-    seen = set()
-    deduped_results = []
+    seen_urls: Set[str] = set()
+    unique_results: List[SearchResult] = []
+    
     for result in results:
-        key = (result.url, result.title)
-        if key not in seen:
-            seen.add(key)
-            deduped_results.append(result)
-    return deduped_results
+        if result.url not in seen_urls:
+            seen_urls.add(result.url)
+            unique_results.append(result)
+    
+    return unique_results
 
-def clean_description(description: str) -> str:
+
+def clean_description(text: str) -> str:
     """
-    清理描述文本
-    Clean description text
-
+    清理描述文本中的多余空白字符
+    Clean extra whitespace characters from description text
+    
     Args:
-        description (str): 原始描述文本 / Original description text
-
+        text (str): 原始描述文本 / Original description text
+        
     Returns:
         str: 清理后的描述文本 / Cleaned description text
     """
-    # 移除多余空白 / Remove extra whitespace
-    description = ' '.join(description.split())
-    # 移除时间戳部分 / Remove timestamp part
-    description = re.sub(r'\d+ \w+ ago — \.\.\.', '', description)
-    return description.strip()
+    # 替换多个空白为单个空格
+    # Replace multiple whitespace with single space
+    cleaned = re.sub(r'\s+', ' ', text)
+    # 移除首尾空白
+    # Remove leading and trailing whitespace
+    return cleaned.strip()
 
 def format_search_term(term: str, site: str = None) -> str:
     """
