@@ -2,26 +2,26 @@ name: Update Data
 
 on:
   schedule:
-    - cron: '0 0 */7 * *'  # 每7天的 UTC 0:00 运行 / Run at UTC 0:00 every 7 days
-  workflow_dispatch:      # 允许手动触发 / Allow manual trigger
+    - cron: '0 0 */7 * *'  # Run at UTC 0:00 every 7 days
+  workflow_dispatch:      # Allow manual trigger
 
 jobs:
   update-data:
     runs-on: ubuntu-latest
     permissions:
-      contents: write    # 添加写入权限 / Add write permission
+      contents: write    # Add write permission
     
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
       with:
-        fetch-depth: 0   # 获取完整历史 / Fetch complete history
-    
+        fetch-depth: 0   # Fetch complete history
+
     - name: Set up Python
       uses: actions/setup-python@v5
       with:
         python-version: '3.10'
-        cache: 'pip'     # 启用 pip 缓存 / Enable pip cache
+        cache: 'pip'     # Enable pip cache
         
     - name: Install dependencies
       run: |
@@ -29,55 +29,55 @@ jobs:
         if [ -f requirements.txt ]; then
           pip install -r requirements.txt
         else
-          echo "警告：未找到 requirements.txt / Warning: requirements.txt not found"
-          # 安装基本依赖 / Install basic dependencies
+          echo "Warning: requirements.txt not found"
+          # Install basic dependencies
           pip install httpx beautifulsoup4
         fi
         
     - name: List directory structure
       run: |
-        echo "当前工作目录 / Current working directory:"
+        echo "Current working directory:"
         pwd
-        echo "\n仓库根目录内容 / Repository root contents:"
+        echo "\nRepository root contents:"
         ls -la
-        echo "\nconfig 目录内容 / Config directory contents:"
-        ls -la config || echo "config directory not found"
-        echo "\nconfig/data 目录内容 / Config/data directory contents:"
-        ls -la config/data || echo "config/data directory not found"
+        echo "\ngooglesearch/config directory contents:"
+        ls -la googlesearch/config || echo "googlesearch/config directory not found"
+        echo "\ngooglesearch/config/data directory contents:"
+        ls -la googlesearch/config/data || echo "googlesearch/config/data directory not found"
         
     - name: Verify Python environment
       run: |
-        echo "Python 版本 / Python version:"
+        echo "Python version:"
         python --version
-        echo "\nPip 版本 / Pip version:"
+        echo "\nPip version:"
         pip --version
-        echo "\n已安装的包 / Installed packages:"
+        echo "\nInstalled packages:"
         pip list
         
     - name: Update data files
       run: |
-        cd config/data
-        
-        # 检查所需文件 / Check required files
+        cd googlesearch/config/data
+
+        # Check required files
         required_files=(
           "update_data.py"
           "fetch_and_save_user_agents.py"
           "fetch_and_save_user_domain.py"
         )
-        
+
         for file in "${required_files[@]}"; do
           if [ ! -f "$file" ]; then
-            echo "错误：找不到文件 / Error: File not found: $file"
+            echo "Error: File not found: $file"
             exit 1
           fi
         done
-        
-        # 添加执行权限 / Add execute permissions
+
+        # Add execute permissions
         chmod +x *.py
-        
-        # 运行更新脚本 / Run update script
+
+        # Run update script
         if ! python update_data.py; then
-          echo "错误：更新脚本执行失败 / Error: Update script execution failed"
+          echo "Error: Update script execution failed"
           exit 1
         fi
         
@@ -85,10 +85,10 @@ jobs:
       id: check_changes
       run: |
         if ! git diff --quiet; then
-          echo "检测到变更 / Changes detected"
+          echo "Changes detected"
           echo "changes=true" >> $GITHUB_OUTPUT
         else
-          echo "未检测到变更 / No changes detected"
+          echo "No changes detected"
         fi
         
     - name: Commit and push if changes
@@ -96,51 +96,51 @@ jobs:
       run: |
         git config --local user.email "github-actions[bot]@users.noreply.github.com"
         git config --local user.name "github-actions[bot]"
-        
-        # 检查文件是否存在 / Check if files exist
-        for file in "config/data/all_domain.txt" "config/data/user_agents.txt"; do
+
+        # Check if files exist
+        for file in "googlesearch/config/data/all_domain.txt" "googlesearch/config/data/user_agents.txt"; do
           if [ ! -f "$file" ]; then
-            echo "错误：找不到文件 / Error: File not found: $file"
+            echo "Error: File not found: $file"
             exit 1
           fi
         done
-        
-        # 添加并提交变更 / Add and commit changes
-        git add config/data/all_domain.txt config/data/user_agents.txt
+
+        # Add and commit changes
+        git add googlesearch/config/data/all_domain.txt googlesearch/config/data/user_agents.txt
         current_date=$(date '+%Y-%m-%d')
-        
-        # 获取变更统计信息
-        ua_changes=$(git diff --numstat config/data/user_agents.txt | awk '{print $1 + $2}' || echo "0")
-        domain_changes=$(git diff --numstat config/data/all_domain.txt | awk '{print $1 + $2}' || echo "0")
 
-        # 构建提交信息
+        # Get change statistics
+        ua_changes=$(git diff --numstat googlesearch/config/data/user_agents.txt | awk '{print $1 + $2}' || echo "0")
+        domain_changes=$(git diff --numstat googlesearch/config/data/all_domain.txt | awk '{print $1 + $2}' || echo "0")
+
+        # Build commit message
         if [ "$ua_changes" != "0" ] && [ "$domain_changes" != "0" ]; then
-          git commit -m "chore(data): 📊 Auto-update data files / 数据文件自动更新 [$current_date]
+          git commit -m "chore(data): 📊 Auto-update data files [$current_date]
 
-        📱 User-Agent: ${ua_changes} lines changed / ${ua_changes} 行变更
-        🌐 Domain list: ${domain_changes} lines changed / 域名列表 ${domain_changes} 行变更
+        📱 User-Agent: ${ua_changes} lines changed
+        🌐 Domain list: ${domain_changes} lines changed
 
-        🤖 Auto-generated by GitHub Actions / GitHub Actions 自动更新 [skip ci]"
+        🤖 Auto-generated by GitHub Actions [skip ci]"
         elif [ "$ua_changes" != "0" ]; then
-          git commit -m "chore(data): 📊 Auto-update data files / 数据文件自动更新 [$current_date]
+          git commit -m "chore(data): 📊 Auto-update data files [$current_date]
 
-        📱 User-Agent: ${ua_changes} lines changed / ${ua_changes} 行变更
+        📱 User-Agent: ${ua_changes} lines changed
 
-        🤖 Auto-generated by GitHub Actions / GitHub Actions 自动更新 [skip ci]"
+        🤖 Auto-generated by GitHub Actions [skip ci]"
         elif [ "$domain_changes" != "0" ]; then
-          git commit -m "chore(data): 📊 Auto-update data files / 数据文件自动更新 [$current_date]
+          git commit -m "chore(data): 📊 Auto-update data files [$current_date]
 
-        🌐 Domain list: ${domain_changes} lines changed / 域名列表 ${domain_changes} 行变更
+        🌐 Domain list: ${domain_changes} lines changed
 
-        🤖 Auto-generated by GitHub Actions / GitHub Actions 自动更新 [skip ci]"
+        🤖 Auto-generated by GitHub Actions [skip ci]"
         else
-          git commit -m "chore(data): 📊 Auto-update data files / 数据文件自动更新 [$current_date]
+          git commit -m "chore(data): 📊 Auto-update data files [$current_date]
 
-        🤖 Auto-generated by GitHub Actions / GitHub Actions 自动更新 [skip ci]"
+        🤖 Auto-generated by GitHub Actions [skip ci]"
         fi
         
-        # 推送变更 / Push changes
+        # Push changes
         if ! git push; then
-          echo "错误：推送变更失败 / Error: Failed to push changes"
+          echo "Error: Failed to push changes"
           exit 1
-        fi 
+        fi
