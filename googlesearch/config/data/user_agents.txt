@@ -1,5 +1,6 @@
-Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.5938 Safari/537.36
-Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36 GTmetrix
+Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/535.11 (KHTML, like Gecko) Chrome/9.0.362.98 Safari/536.22
+Mozilla/5.0 (Macintosh; Intel Mac OS X 11_4_2) AppleWebKit/537.25 (KHTML, like Gecko) Chrome/10.0.1826.56 Safari/537.5
+Mozilla/5.0 (Windows NT.6.2; WOW64) AppleWebKit/536.3 (KHTML, like Gecko) Chrome/10.0.394.0 Safari/535.18
 Mozilla/5.0 (Kubuntu; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36
 Mozilla/5.0 (CentOS; Linux i686) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36
 Mozilla/5.0 (Knoppix; Linux i686) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36
@@ -13,5 +14,3 @@ Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) 
 Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.6533.100 Safari/537.36
 Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.5304.107 Safari/537.36
 Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.6533.99 Safari/537.36 TeslaMusic/develop-2024.44.32.1-7-ee93da10a3
-Mozilla/5.0 (Windows NT 8.1; Win64; x64) AppleWebKit/539.41 (KHTML, like Gecko) Chrome/127.0.7358.345 Safari/539.41
-Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.6533.99 Safari/537.36 TeslaMusic/terminal-das-fsd-eap-13-2-3-35441-6c2465ee9c
