@@ -1,5 +1,11 @@
 # GoogleSearch-Tool
 
+> **⚠️ IMPORTANT NOTICE**
+>
+> **Google Search functionality is currently unavailable. News Search is temporarily available.**
+>
+> **For official Google Search API, please visit: https://developers.google.cn/custom-search/v1/libraries?hl=en**
+
 **GoogleSearch-Tool** is a powerful Python library for performing Google searches and retrieving search results programmatically. It features dynamic query parameters, intelligent result deduplication, custom proxy support, and automatic domain rotation to avoid rate limiting.
 
 [![GitHub stars](https://img.shields.io/github/stars/huazz233/googlesearch.svg)](https://github.com/huazz233/googlesearch/stargazers)

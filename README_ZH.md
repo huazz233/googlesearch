@@ -1,5 +1,11 @@
 # GoogleSearch-Tool
 
+> **⚠️ 重要提示**
+>
+> **Google 搜索功能目前不可用，新闻搜索暂时可用。**
+>
+> **如需使用官方 Google 搜索 API，请访问：https://developers.google.cn/custom-search/v1/libraries?hl=en**
+
 **GoogleSearch-Tool** 是一个强大的 Python 库，用于程序化执行 Google 搜索并获取搜索结果。它具有动态查询参数、智能结果去重、自定义代理支持和自动域名轮换等功能，有效避免访问限制。
 
 [![GitHub stars](https://img.shields.io/github/stars/huazz233/googlesearch.svg)](https://github.com/huazz233/googlesearch/stargazers)
