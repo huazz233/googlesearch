@@ -140,3 +140,9 @@ docs/api/
 ehthumbs.db
 Thumbs.db
 
+# Packaging (handled by separate project)
+setup.py
+setup.cfg
+pyproject.toml
+MANIFEST.in
+

@@ -18,7 +18,7 @@ async def test_search():
 
         print("\n=== 普通搜索结果 / Regular Search Results ===")
         results = await search(
-            term="python programming",
+            term="googlesearch-tool",
             num=10,
             lang="en"
             # proxy=proxy  # 取消注释以使用代理 / Uncomment to use proxy
@@ -54,7 +54,7 @@ async def test_news_search():
     try:
         print("\n=== 新闻搜索结果 / News Search Results ===")
         results = await search_news(
-            term="python news",
+            term="googlesearch-tool",
             num=5,
             lang="en"
             # proxy="http://your-proxy-host:port"  # 取消注释并修改代理地址 / Uncomment and modify if needed

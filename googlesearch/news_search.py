@@ -3,10 +3,10 @@ from typing import List, Dict, Any, Optional
 
 import httpx
 from bs4 import BeautifulSoup, Tag
-from googlesearch.config.config import Config
-from googlesearch.models import SearchResult
-from googlesearch.search import _req
-from googlesearch.utils import deduplicate
+from .config.config import Config
+from .models import SearchResult
+from .search import _req
+from .utils import deduplicate
 
 
 async def parse_news_results(resp_text: str, deduplicate_results: bool) -> List[SearchResult]:

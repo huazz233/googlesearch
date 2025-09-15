@@ -43,6 +43,8 @@ Install the latest version via pip:
 pip install --upgrade googlesearch-tool
 ```
 
+**PyPI Package**: [https://pypi.org/project/googlesearch-tool/](https://pypi.org/project/googlesearch-tool/)
+
 ### Requirements
 
 - Python 3.7+

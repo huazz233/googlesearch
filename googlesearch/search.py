@@ -3,9 +3,9 @@ from typing import List, Dict, Any, Optional
 
 import httpx
 from bs4 import BeautifulSoup
-from googlesearch.config.config import Config
-from googlesearch.models import SearchResult
-from googlesearch.utils import deduplicate, clean_description
+from .config.config import Config
+from .models import SearchResult
+from .utils import deduplicate, clean_description
 
 
 async def _req(
@@ -41,7 +41,7 @@ async def _req(
         "bih": 856,   # 指定窗口宽度 / Specify window width
         **{k: v for k, v in kwargs.items()}
     }
-    resp = await client.get(url, headers=headers, params=params, timeout=timeout)
+    resp = await client.get(url, headers=headers, params=params, timeout=timeout,follow_redirects=True)
     resp.raise_for_status()
     return resp.text
 
