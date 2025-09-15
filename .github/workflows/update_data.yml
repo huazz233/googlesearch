@@ -31,7 +31,7 @@ jobs:
         else
           echo "警告：未找到 requirements.txt / Warning: requirements.txt not found"
           # 安装基本依赖 / Install basic dependencies
-          pip install requests beautifulsoup4 lxml
+          pip install httpx beautifulsoup4
         fi
         
     - name: List directory structure

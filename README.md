@@ -1,130 +1,141 @@
-# GooglSearch-Tool
+# GoogleSearch-Tool
 
-**GooglSearch-Tool** is a Python library for performing Google searches and retrieving search results. It supports dynamic query parameters, result deduplication, and custom proxy configuration.
+**GoogleSearch-Tool** is a powerful Python library for performing Google searches and retrieving search results programmatically. It features dynamic query parameters, intelligent result deduplication, custom proxy support, and automatic domain rotation to avoid rate limiting.
 
 [![GitHub stars](https://img.shields.io/github/stars/huazz233/googlesearch.svg)](https://github.com/huazz233/googlesearch/stargazers)
 [![GitHub issues](https://img.shields.io/github/issues/huazz233/googlesearch.svg)](https://github.com/huazz233/googlesearch/issues)
 [![GitHub license](https://img.shields.io/github/license/huazz233/googlesearch.svg)](https://github.com/huazz233/googlesearch/blob/master/LICENSE)
+[![PyPI version](https://badge.fury.io/py/googlesearch-tool.svg)](https://badge.fury.io/py/googlesearch-tool)
 
-[简体中文](README_ZH.md) | English
+[简体中文](README_ZH.md) | **English**
 
 ## Table of Contents
 
 - [Features](#features)
 - [Installation](#installation)
 - [Quick Start](#quick-start)
+- [API Parameters](#api-parameters)
 - [Advanced Usage](#advanced-usage)
+- [Search Syntax](#search-syntax)
 - [Configuration](#configuration)
-- [Packaging](#packaging)
-- [FAQ](#faq)
 - [Contributing](#contributing)
 - [Community Support](#community-support)
 
 ## Features
 
-- Support for Google search
-- Configurable query parameters (including time range)
-- Result deduplication based on title, URL, and summary
-- Custom proxy support
-- Search results include title, link, description, and time information
-- Random domain selection for requests to prevent access restrictions
-- Random User-Agent header selection
-- Manual update and save of latest User-Agent and Google domain lists (functions and save location in `/config/data` directory)
+- **Google Search Support**: Perform both regular web searches and news searches
+- **Advanced Query Parameters**: Support for time ranges, language settings, and Google search operators
+- **Intelligent Deduplication**: Remove duplicate results based on title, URL, and content
+- **Proxy Support**: Full proxy configuration support for bypassing restrictions
+- **Anti-Detection**:
+  - Random Google domain rotation from 167+ domains
+  - Random User-Agent rotation from latest Chrome versions
+  - Automatic request throttling
+- **Comprehensive Results**: Extract title, URL, description, and timestamp information
+- **Auto-Updates**: Automated daily updates of domains and User-Agent lists via GitHub Actions
+- **Easy Integration**: Simple async/await API with comprehensive error handling
 
 ## Installation
 
-Install `googlesearch-tool` via `pip`:
+Install the latest version via pip:
 
 ```bash
-pip install --upgrade  googlesearch-tool
+pip install --upgrade googlesearch-tool
 ```
+
+### Requirements
+
+- Python 3.7+
+- httpx
+- beautifulsoup4
+- anyio
+- socksio (for SOCKS proxy support)
 
 ## Quick Start
 
-Here's a basic example of using the GooglSearch-Tool library:
+### Basic Web Search
 
 ```python
 import asyncio
 from googlesearch.search import search
-from googlesearch.news_search import search_news
 
-async def test_search():
-    """Test regular search"""
-    try:
-        """
-        Proxy Configuration Notes:
-        1. Without proxy: Simply delete or comment out the proxy configuration
-        2. With proxy: Uncomment and modify the proxy address
-        """
-        # Proxy configuration example (uncomment and modify if needed)
-        # proxy = "http://your-proxy-host:port"
-         
-        print("\n=== Regular Search Results ===")
-        results = await search(
-            term="python programming",
-            num=10,
-            lang="en",
-            # proxy=proxy  # Uncomment to use proxy
-        )
+async def basic_search():
+    """Perform a basic Google search"""
+    results = await search(
+        term="python programming",
+        num=10,
+        lang="en"
+    )
 
-        if not results:
-            print("No search results found")
-            return False
+    for i, result in enumerate(results, 1):
+        print(f"{i}. {result.title}")
+        print(f"   URL: {result.url}")
+        print(f"   Description: {result.description}")
+        if result.time:
+            print(f"   Time: {result.time}")
+        print()
 
-        for i, result in enumerate(results, 1):
-            print(f"\nResult {i}:")
-            print(f"Title: {result.title}")
-            print(f"URL: {result.url}")
-            print(f"Description: {result.description}")
-            if result.time:
-                print(f"Time: {result.time}")
-            print("-" * 80)
-
-        return True
-    except Exception as e:
-        print(f"Regular search failed: {str(e)}")
-        return False
-
-async def test_news_search():
-    """Test news search"""
-    try:
-        print("\n=== News Search Results ===")
-        results = await search_news(
-            term="python news",
-            num=5,
-            lang="en",
-            # proxy="http://your-proxy-host:port"  # Uncomment and modify if needed
-        )
-
-        if not results:
-            print("No news results found")
-            return False
-
-        for i, result in enumerate(results, 1):
-            print(f"\nNews {i}:")
-            print(f"Title: {result.title}")
-            print(f"URL: {result.url}")
-            print(f"Description: {result.description}")
-            if result.time:
-                print(f"Time: {result.time}")
-            print("-" * 80)
-
-        return True
-    except Exception as e:
-        print(f"News search failed: {str(e)}")
-        return False
-
-if __name__ == "__main__":
-    asyncio.run(test_search())
-    asyncio.run(test_news_search())
+# Run the search
+asyncio.run(basic_search())
 ```
 
-### Parameters
+### News Search
 
-- `url`: Random Google domain obtained via `Config.get_random_domain()`
-- `headers`: Request headers containing random User-Agent
+```python
+import asyncio
+from googlesearch.news_search import search_news
+
+async def news_search():
+    """Search for news articles"""
+    results = await search_news(
+        term="artificial intelligence",
+        num=5,
+        lang="en"
+    )
+
+    for result in results:
+        print(f"📰 {result.title}")
+        print(f"🔗 {result.url}")
+        print(f"📝 {result.description}")
+        print(f"⏰ {result.time}")
+        print("-" * 50)
+
+asyncio.run(news_search())
+```
+
+### Advanced Search with Proxy
+
+```python
+import asyncio
+from googlesearch.search import search
+
+async def advanced_search():
+    """Advanced search with proxy and time filtering"""
+    results = await search(
+        term="site:github.com machine learning",
+        num=20,
+        lang="en",
+        tbs="qdr:m",  # Past month
+        proxy="http://your-proxy-host:port",  # Optional
+        timeout=15
+    )
+
+    for result in results:
+        print(f"Title: {result.title}")
+        print(f"URL: {result.url}")
+        print(f"Description: {result.description[:100]}...")
+        print()
+
+asyncio.run(advanced_search())
+```
+
+## API Parameters
+
+### Search Function Parameters
+
 - `term`: Search query string
-- `num`: Number of results to retrieve
+- `num`: Number of results to retrieve (default 10, max 100)
+- `lang`: Search language (e.g., "en", "zh-CN")
 - `tbs`: Time range parameter
   - `qdr:h` - Past hour
   - `qdr:d` - Past day
@@ -133,15 +144,16 @@ if __name__ == "__main__":
   - `qdr:y` - Past year
 - `proxy`: Proxy configuration (optional)
 - `timeout`: Request timeout in seconds
+- `deduplicate_results`: Whether to remove duplicates (default False)
 
-### Result Object
+### Result Object Properties
 
-Each search result object contains the following fields:
+Each search result contains the following properties:
 
-- `link`: Result URL
+- `url`: Result URL
 - `title`: Result title
 - `description`: Result description
-- `time_string`: Result time information (if available)
+- `time`: Time information (if available)
 
 ## Advanced Usage
 
@@ -158,140 +170,77 @@ print(url)  # Example output: https://www.google.ge/search
 
 # Get random User-Agent
 headers = {"User-Agent": Config.get_random_user_agent()}
-print(headers)  # Example output: {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 11_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.1.7760.206 Safari/537.36'}
+print(headers)
 ```
 
-### Domain and User-Agent Updates
+### Domain and User-Agent Management
 
 Domain lists and User-Agent lists are stored in the `config/data` directory:
-- `all_domain.txt`: Contains all available Google search domains
+- `all_domain.txt`: Contains 167+ available Google search domains
 - `user_agents.txt`: Contains the latest Chrome User-Agent list
 
-There are three ways to update these lists:
+#### Update Methods
 
-#### 1. Manual Update of Individual Files
-- Run `fetch_and_save_user_domain.py` to update the domain list
-- Run `fetch_and_save_user_agents.py` to update the User-Agent list
-- Run `check_domains.py` to check domain availability
+**1. Manual Update of Individual Files**
+```bash
+cd config/data
+python fetch_and_save_user_domain.py    # Update domain list
+python fetch_and_save_user_agents.py    # Update User-Agent list
+python check_domains.py                 # Check domain availability
+```
 
-#### 2. Manual Update of All Data
-Run the `update_data.py` script to update all data at once:
+**2. Manual Update of All Data**
 ```bash
 python config/data/update_data.py
 ```
 
-#### 3. Automatic Update via GitHub Actions
-We have configured a GitHub Actions workflow to automatically update the data:
-- Runs automatically every day at UTC 0:00
-- Can be manually triggered from the Actions page of the GitHub repository
-- Automatically commits and pushes changes to the repository
-- Update logs and status can be viewed on the Actions page
+**3. Automatic Update via GitHub Actions**
+- Runs daily at UTC 0:00
+- Manual trigger available on GitHub Actions page
+- Automatic commit and push of changes
+- View logs and status on Actions page
 
-Automatic update process:
+Update process:
 1. Updates User-Agent list
 2. Updates Google domain list
 3. Checks domain availability
-4. Automatically commits and pushes changes if any
+4. Commits changes if any
 
-## Configuration
-
-### Why do my requests always time out?
-
-Please check your network connection and proxy settings. Ensure that your proxy is configured correctly and that the target site is not blocked.
-
-### How do I make more complex queries?
-
-You can use Google search's advanced syntax (such as `site:`, `filetype:`, etc.) to construct more complex query strings.
-
-### How do I handle request failures or exceptions?
-
-Please ensure proper exception handling in your requests and check the error logs for more information. You can refer to the [httpx documentation](https://www.python-httpx.org/) for more information about exception handling.
-
-## Contributing
-
-We welcome community members to participate in project development! Here are several ways to contribute:
-
-### Star ⭐ This Project
-If you find this project helpful, please show your support by clicking the Star button in the top right corner!
-
-### Submit Issues
-Found a bug or have a feature suggestion? Please submit an [Issue](https://github.com/huazz233/googlesearch/issues)!
-- 🐛 Bug reports: Please describe the issue in detail with steps to reproduce
-- 💡 Feature suggestions: Please explain the use case and expected behavior
-
-### Pull Requests
-Want to contribute code? We welcome PRs!
-
-1. Fork this repository
-2. Create a new branch: `git checkout -b feature/your-feature-name`
-3. Commit changes: `git commit -am 'Add some feature'`
-4. Push branch: `git push origin feature/your-feature-name`
-5. Submit a Pull Request
-
-We will carefully review each PR and provide timely feedback.
-
-## Community Support
-
-- 📫 Email: [huazz233@163.com](mailto:huazz233@163.com)
-- 💬 Issue Feedback: [GitHub Issues](https://github.com/huazz233/googlesearch/issues)
-- 📖 Development Docs: [Wiki](https://github.com/huazz233/googlesearch/wiki)
-- 👥 Discussion: [Discussions](https://github.com/huazz233/googlesearch/discussions)
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details 
-
-## Advanced Search Syntax
-
-> For more detailed information about Google search operators and advanced search techniques, please visit [Google Search Help](https://support.google.com/websearch/answer/2466433).
+## Search Syntax
 
 ### Basic Search Operators
 
-Here are some commonly used search operators. Note: Don't include spaces between the operator and search terms:
+Common search operators (no spaces between operator and search terms):
 
-- **Exact Match Search**: Use quotes around phrases, e.g., `"exact phrase"`
+- **Exact Match**: Use quotes around phrases, e.g., `"exact phrase"`
 - **Site Search**: `site:domain.com keywords`
-- **Exclude Terms**: Use minus sign to exclude words, e.g., `python -snake`
+- **Exclude Terms**: Use minus sign, e.g., `python -snake`
 - **File Type**: `filetype:pdf keywords`
 - **Title Search**: `intitle:keywords`
 - **URL Search**: `inurl:keywords`
 - **Multiple Conditions**: `site:domain.com filetype:pdf keywords`
 
-### Time Range Parameters (tbs)
-
-The search function supports the following time range parameters:
+### Time Range Parameters
 
 ```python
-tbs = {
-    "qdr:h",  # Results from the past hour
-    "qdr:d",  # Results from the past day
-    "qdr:w",  # Results from the past week
-    "qdr:m",  # Results from the past month
-    "qdr:y"   # Results from the past year
-}
-```
-
-### Other Search Parameters
-
-```python
-params = {
-    "hl": "en",        # Interface language (e.g., en, zh-CN)
-    "lr": "lang_en",   # Search results language
-    "safe": "active",  # Safe search setting ("active" enables safe search)
-    "start": 0,        # Starting position for results (for pagination)
-    "num": 100,        # Number of results to return (max 100)
+tbs_options = {
+    "qdr:h",  # Past hour
+    "qdr:d",  # Past day
+    "qdr:w",  # Past week
+    "qdr:m",  # Past month
+    "qdr:y"   # Past year
 }
 ```
 
 ### Advanced Search Examples
 
 ```python
-# Search for PDF files on specific website
+# Search PDF files on specific website
 term = "site:example.com filetype:pdf python programming"
 
-# Search for news within specific time range
+# Search news within time range
 term = "python news site:cnn.com"
-tbs = "qdr:d"  # Results from past 24 hours
+tbs = "qdr:d"  # Past 24 hours
 
 # Exact match in title
 term = 'intitle:"machine learning" site:arxiv.org'
@@ -300,47 +249,49 @@ term = 'intitle:"machine learning" site:arxiv.org'
 term = "python programming -beginner -tutorial site:github.com"
 ```
 
-### Search Result Filtering
+## Configuration
 
-Search results can be filtered by the following types:
-- Web
-- News
-- Images
-- Videos
+### Proxy Setup
 
-Our library provides dedicated functions for different types of searches:
-```python
-# Regular web search
-results = await search(...)
+1. **Without Proxy**: Remove or comment out proxy parameters
+2. **With Proxy**: Set proxy parameter to your proxy server URL
 
-# News search
-news_results = await search_news(...)
-```
+### Common Issues
 
-### Search Tips
+**Request Timeouts**: Check network connection and proxy settings
 
-1. **Using Multiple Conditions**
-   ```python
-   # Search across multiple specific sites
-   term = "site:edu.gov OR site:org.gov machine learning"
-   ```
+**Complex Queries**: Use Google search operators (`site:`, `filetype:`, etc.)
 
-2. **Using Wildcards**
-   ```python
-   # Use asterisk as wildcard
-   term = "python * programming"
-   ```
+**Error Handling**: Implement proper exception handling and check logs
 
-3. **Using Number Ranges**
-   ```python
-   # Search within specific year range
-   term = "python programming 2020..2024"
-   ```
+## Contributing
 
-4. **Related Terms Search**
-   ```python
-   # Use tilde for related terms
-   term = "~programming tutorials"
-   ```
+We welcome contributions! Here's how you can help:
 
-For more detailed information about Google search operators and advanced search techniques, please visit [Google Search Help](https://support.google.com/websearch/answer/2466433). 
+### ⭐ Star the Project
+If you find this project helpful, please star it to show your support!
+
+### 🐛 Report Issues
+Found a bug or have a feature request? [Submit an issue](https://github.com/huazz233/googlesearch/issues)
+
+### 🔧 Submit Pull Requests
+1. Fork the repository
+2. Create a feature branch: `git checkout -b feature/your-feature-name`
+3. Commit your changes: `git commit -am 'Add some feature'`
+4. Push to the branch: `git push origin feature/your-feature-name`
+5. Submit a Pull Request
+
+## Community Support
+
+- 📧 **Email**: [huazz233@163.com](mailto:huazz233@163.com)
+- 🐛 **Issues**: [GitHub Issues](https://github.com/huazz233/googlesearch/issues)
+- 📚 **Documentation**: [Wiki](https://github.com/huazz233/googlesearch/wiki)
+- 💬 **Discussions**: [GitHub Discussions](https://github.com/huazz233/googlesearch/discussions)
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+---
+
+> For more detailed information about Google search operators and advanced search techniques, visit [Google Search Help](https://support.google.com/websearch/answer/2466433).

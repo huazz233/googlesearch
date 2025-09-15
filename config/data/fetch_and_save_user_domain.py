@@ -5,7 +5,7 @@
 @Author: huazz
 """
 from urllib.parse import urlparse
-import requests
+import httpx
 from bs4 import BeautifulSoup
 import sys
 
@@ -26,7 +26,7 @@ def fetch_domains(url):
         headers = {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
         }
-        response = requests.get(url, headers=headers, timeout=10)
+        response = httpx.get(url, headers=headers, timeout=10)
         response.raise_for_status()
 
         # 使用 BeautifulSoup 解析网页内容 / Parse webpage content
