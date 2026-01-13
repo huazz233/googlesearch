@@ -4,7 +4,7 @@ from urllib.parse import unquote
 
 import httpx
 from bs4 import BeautifulSoup
-from .config.config import Config
+from .settings import get_random_domain, get_random_user_agent
 from .models import SearchResult
 from .utils import deduplicate
 
@@ -180,9 +180,9 @@ async def search(
     """
     # 使用默认配置 / Use default configuration
     if url is None:
-        url = Config.get_random_domain()
+        url = get_random_domain()
     if headers is None:
-        headers = {"User-Agent": Config.get_random_user_agent()}
+        headers = {"User-Agent": get_random_user_agent()}
 
     kwargs["hl"] = lang
     escaped_term = term.replace(' site:', '+site:')

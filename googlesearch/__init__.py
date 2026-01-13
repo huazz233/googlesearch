@@ -18,14 +18,14 @@ For more advanced usage, see the documentation and examples.
 """
 
 __version__ = "2.0.0"
-__author__ = "Your Name"
-__email__ = "your.email@example.com"
+__author__ = "huazz233"
+__email__ = "huazz233@163.com"
 __license__ = "MIT"
 __pypi_url__ = "https://pypi.org/project/googlesearch-tool/"
 
 # Import main functions for easy access
 from .search import search
-from .news_search import search_news
+from .news import search_news
 from .models import SearchResult
 
 # Define what gets imported with "from googlesearch import *"

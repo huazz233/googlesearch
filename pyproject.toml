@@ -1,0 +1,67 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "googlesearch-tool"
+dynamic = ["version"]
+authors = [
+    { name = "huazz233", email = "huazz233@163.com" }
+]
+description = "A Python library for performing Google searches with Opera Mini UA bypass"
+readme = "README.md"
+requires-python = ">=3.8"
+license = "MIT"
+keywords = ["google", "search", "web-scraping", "async", "proxy", "opera-mini"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Internet :: WWW/HTTP :: Indexing/Search",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+dependencies = [
+    "httpx>=0.24.0",
+    "beautifulsoup4>=4.9.3",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "pytest-asyncio>=0.21.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/huazz233/googlesearch"
+Documentation = "https://github.com/huazz233/googlesearch#readme"
+Repository = "https://github.com/huazz233/googlesearch"
+Issues = "https://github.com/huazz233/googlesearch/issues"
+
+[tool.hatch.version]
+path = "googlesearch/__init__.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["googlesearch"]
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "googlesearch/",
+    "README.md",
+    "README_ZH.md",
+    "LICENSE.txt",
+]
+exclude = [
+    "tests/",
+    "scripts/",
+    "examples/",
+    ".github/",
+    "*.pyc",
+    "__pycache__/",
+]

@@ -145,9 +145,8 @@ nul
 # Claude Code
 .claude/
 
-# Packaging (handled by separate project)
-setup.py
-setup.cfg
-pyproject.toml
-MANIFEST.in
+# Build artifacts
+dist/
+build/
+*.egg-info/
 

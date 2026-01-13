@@ -9,7 +9,7 @@ import asyncio
 from typing import List, Dict, Any, Optional
 
 import httpx
-from .config.config import Config
+from .settings import get_random_domain, get_random_user_agent
 from .models import SearchResult
 from .search import _req, parse_results
 from .utils import deduplicate
@@ -50,9 +50,9 @@ async def search_news(
     """
     # 使用默认配置 / Use default configuration
     if url is None:
-        url = Config.get_random_domain()
+        url = get_random_domain()
     if headers is None:
-        headers = {"User-Agent": Config.get_random_user_agent()}
+        headers = {"User-Agent": get_random_user_agent()}
 
     # 添加新闻搜索参数 / Add news search parameter
     kwargs["tbm"] = "nws"

@@ -1,4 +1,2 @@
-beautifulsoup4
-httpx
-anyio
-socksio
+httpx>=0.24.0
+beautifulsoup4>=4.9.3
