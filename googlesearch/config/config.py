@@ -11,26 +11,16 @@ class Config:
     # 基础路径配置 / Base path configuration
     BASE_DIR = os.path.dirname(__file__)
     DATA_DIR = os.path.join(BASE_DIR, "data")
-    UA_PATH = os.path.join(DATA_DIR, "user_agents.txt")
     DOMAIN_PATH = os.path.join(DATA_DIR, "all_domain.txt")
 
-    # 初始默认值（作为备选）/ Initial default values (as fallback)
+    # 域名列表默认值 / Default domain list
     _domains = ["www.google.com"]
-    _user_agents = [
-        "Mozilla/5.0 (X11; CrOS x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
-    ]
 
     @staticmethod
-    def get_data(file_path):
+    def _load_file(file_path):
         """
         从文件中读取数据
         Read data from file
-
-        Args:
-            file_path (str): 文件路径 / File path
-
-        Returns:
-            list: 文件内容列表 / List of file contents
         """
         try:
             with open(file_path, encoding="utf-8") as fp:
@@ -39,49 +29,63 @@ class Config:
             return []
 
     @classmethod
-    def load_user_agents(cls):
-        """
-        加载 User-Agent 列表
-        Load User-Agent list
-        """
-        agents = cls.get_data(cls.UA_PATH)
-        if agents:
-            cls._user_agents = agents
-
-    @classmethod
     def load_domains(cls):
         """
         加载域名列表
         Load domain list
         """
-        domains = cls.get_data(cls.DOMAIN_PATH)
+        domains = cls._load_file(cls.DOMAIN_PATH)
         if domains:
             cls._domains = domains
 
     @classmethod
     def get_random_user_agent(cls):
         """
-        获取随机 User-Agent
-        Get random User-Agent
+        获取随机 Opera Mini User-Agent
+        Get random Opera Mini User-Agent
 
-        Returns:
-            str: 随机User-Agent字符串 / Random User-Agent string
+        Opera Mini UA 可绕过 Google 的 JavaScript 检测
+        Opera Mini UA bypasses Google's JavaScript detection
+
+        参考 / Reference: https://github.com/deedy5/ddgs
         """
-        return random.choice(cls._user_agents)
+        patterns = [
+            "Opera/9.80 (J2ME/MIDP; Opera Mini/{v}/{b}; U; {l}) Presto/{p} Version/{f}",
+            "Opera/9.80 (Android; Linux; Opera Mobi/{mb}; U; {l}) Presto/{p} Version/{f}",
+            "Opera/9.80 (iPhone; Opera Mini/{v}/{b}; U; {l}) Presto/{p} Version/{f}",
+            "Opera/9.80 (iPad; Opera Mini/{v}/{b}; U; {l}) Presto/{p} Version/{f}",
+        ]
+        mini_versions = ["4.0", "5.0.17381", "7.1.32444", "9.80"]
+        mobi_builds = ["27", "447", "ADR-1011151731"]
+        builds = ["18.678", "24.743", "503"]
+        prestos = ["2.6.35", "2.7.60", "2.8.119"]
+        finals = ["10.00", "11.10", "12.16"]
+        langs = ["en-US", "en-GB", "de-DE", "fr-FR", "es-ES", "ru-RU", "zh-CN"]
+
+        pattern = random.choice(patterns)
+        replacements = {
+            "{l}": random.choice(langs),
+            "{p}": random.choice(prestos),
+            "{f}": random.choice(finals),
+            "{v}": random.choice(mini_versions),
+            "{b}": random.choice(builds),
+            "{mb}": random.choice(mobi_builds),
+        }
+
+        result = pattern
+        for key, value in replacements.items():
+            result = result.replace(key, value)
+        return result
 
     @classmethod
     def get_random_domain(cls):
         """
-        获取随机域名
-        Get random domain
-
-        Returns:
-            str: 随机域名URL / Random domain URL
+        获取随机 Google 域名
+        Get random Google domain
         """
         domain = random.choice(cls._domains)
         return f"https://{domain}/search"
 
 
-# 初始化加载 / Initial loading
-Config.load_user_agents()
+# 初始化加载域名列表 / Load domain list on init
 Config.load_domains()
