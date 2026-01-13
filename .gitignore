@@ -104,6 +104,7 @@ wheels/
 
 # Virtual Environment
 venv/
+.venv/
 env/
 ENV/
 
@@ -139,6 +140,10 @@ docs/api/
 .Trashes
 ehthumbs.db
 Thumbs.db
+nul
+
+# Claude Code
+.claude/
 
 # Packaging (handled by separate project)
 setup.py
