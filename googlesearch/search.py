@@ -1,12 +1,44 @@
 import asyncio
+import random
 from typing import List, Dict, Any, Optional
-from urllib.parse import unquote
+from urllib.parse import unquote, urlparse, urlunparse
 
 import httpx
-from bs4 import BeautifulSoup
-from .settings import get_random_domain, get_random_user_agent
+from bs4 import BeautifulSoup, Tag
+
+from .settings import (
+    GOOGLE_COOKIES,
+    get_random_domain,
+    get_random_user_agent,
+    iter_stable_domains,
+)
 from .models import SearchResult
 from .utils import deduplicate
+
+
+# 触发重试的状态码 — Google 在限流/反爬时常返回 403 或 429
+# Status codes that trigger retry — Google often uses 403 / 429 for rate limiting
+_RETRY_STATUS = {403, 429, 503}
+_MAX_ATTEMPTS = 4
+
+# 解析时需要丢弃的 Google 内部链接前缀(AI Overview "Learn more" 等噪声)
+# Internal Google links to discard when parsing (AI Overview noise etc.)
+_NOISE_HOSTS = (
+    "support.google.com/websearch",
+    "policies.google.com",
+    "accounts.google.com",
+)
+
+
+def _swap_domain(url: str, alternatives: List[str], exclude: set) -> str:
+    """从备用池中选一个未试过的域名,保留原 URL 的 path/query."""
+    parsed = urlparse(url)
+    pool = [u for u in alternatives if urlparse(u).netloc not in exclude]
+    if not pool:
+        return url
+    new = urlparse(random.choice(pool))
+    return urlunparse(parsed._replace(netloc=new.netloc, scheme=new.scheme))
+
 
 async def _req(
     url: str,
@@ -15,130 +47,184 @@ async def _req(
     term: str,
     timeout: int,
     start: int = 0,
-    **kwargs: Any
+    **kwargs: Any,
 ) -> str:
     """
-    发送搜索请求
-    Send search request
-
-    Args:
-        url (str): 请求URL / Request URL
-        headers (dict): 请求头 / Request headers
-        client (httpx.AsyncClient): HTTP客户端 / HTTP client
-        term (str): 搜索词 / Search term
-        timeout (int): 超时时间 / Timeout duration
-        start (int): 起始位置，用于分页 / Start position for pagination
-        **kwargs: 其他参数 / Additional parameters
-
-    Returns:
-        str: 响应文本 / Response text
+    发送搜索请求。403/429 自动指数退避重试,并切换备用域名。
+    Send a search request. On 403/429 it retries with exponential backoff
+    AND swaps to an alternative domain from the stable pool to dodge
+    per-domain rate limits.
     """
-    # Google 在 Opera Mini 模式下忽略 num 参数，每页固定返回约 10 个结果
-    # Google ignores num parameter in Opera Mini mode, returns ~10 results per page
-    params = {
-        "q": term,
-        "start": start,
-        **{k: v for k, v in kwargs.items()}
-    }
+    params = {"q": term, "start": start, **kwargs}
     headers = {**headers, "Accept": "*/*"}
-    resp = await client.get(
-        url,
-        headers=headers,
-        params=params,
-        timeout=timeout,
-        follow_redirects=True,
-    )
-    resp.raise_for_status()
-    return resp.text
+    alternatives = iter_stable_domains()
+    tried_hosts: set = set()
+    current_url = url
+
+    last_exc: Optional[Exception] = None
+    for attempt in range(_MAX_ATTEMPTS):
+        tried_hosts.add(urlparse(current_url).netloc)
+        try:
+            resp = await client.get(
+                current_url,
+                headers=headers,
+                params=params,
+                cookies=GOOGLE_COOKIES,
+                timeout=timeout,
+                follow_redirects=True,
+            )
+            if resp.status_code in _RETRY_STATUS and attempt < _MAX_ATTEMPTS - 1:
+                await asyncio.sleep(0.3 + 0.4 * attempt)
+                current_url = _swap_domain(current_url, alternatives, tried_hosts)
+                continue
+            resp.raise_for_status()
+            return resp.text
+        except httpx.HTTPStatusError as e:
+            last_exc = e
+            if e.response.status_code not in _RETRY_STATUS or attempt == _MAX_ATTEMPTS - 1:
+                raise
+            await asyncio.sleep(0.3 + 0.4 * attempt)
+            current_url = _swap_domain(current_url, alternatives, tried_hosts)
+        except (httpx.TimeoutException, httpx.TransportError) as e:
+            last_exc = e
+            if attempt == _MAX_ATTEMPTS - 1:
+                raise
+            await asyncio.sleep(0.3 + 0.4 * attempt)
+
+    if last_exc:
+        raise last_exc
+    return ""
+
+
+def _decode_google_href(href: str) -> str:
+    """解码 Google 的 /url?q=... 跳转链接 / Decode Google /url?q=... redirect."""
+    if "/url?q=" in href:
+        return unquote(href.split("/url?q=", 1)[1].split("&", 1)[0])
+    return href
+
+
+def _is_real_result(link: str) -> bool:
+    """判断是否是真实的 http(s) 外链,且不属于 Google 内部噪声链接."""
+    if not link.startswith("http"):
+        return False
+    return not any(noise in link for noise in _NOISE_HOSTS)
+
+
+def _extract_lynx(block: Tag) -> Optional[SearchResult]:
+    """Lynx UA 路径: div.ezO2md → span.CVA68e (title) + span.FrIlee (desc)."""
+    link_tag = block.find("a", href=True)
+    if not link_tag:
+        return None
+    link = _decode_google_href(link_tag["href"])
+    if not _is_real_result(link):
+        return None
+    title_tag = link_tag.find("span", class_="CVA68e") or link_tag.find("h3")
+    title = title_tag.get_text(strip=True) if title_tag else link_tag.get_text(strip=True)
+    desc_tag = block.find("span", class_="FrIlee")
+    desc = desc_tag.get_text(strip=True) if desc_tag else ""
+    if not title:
+        return None
+    return SearchResult(link, title, desc)
+
+
+def _extract_opera_mini(block: Tag) -> Optional[SearchResult]:
+    """Opera Mini UA 路径: div.Gx5Zad → h3 + div.H66NU / div.InXCmc."""
+    link_tag = block.find("a", href=lambda x: x and "/url?q=" in x)
+    if not link_tag:
+        return None
+    link = _decode_google_href(link_tag.get("href", ""))
+    if not _is_real_result(link):
+        return None
+    h3 = block.find("h3")
+    title = h3.get_text(strip=True) if h3 else link_tag.get_text(strip=True)
+    desc_tag = block.find("div", class_=lambda x: x and ("H66NU" in x or "InXCmc" in x))
+    desc = desc_tag.get_text(strip=True) if desc_tag else ""
+    if not title:
+        return None
+    return SearchResult(link, title, desc)
+
+
+def _extract_generic(block: Tag) -> Optional[SearchResult]:
+    """
+    通用兜底: 找带 h3 的 <a>,描述取容器内剩余文本前若干字符
+    Generic fallback: find <a> containing h3, take leftover text as snippet.
+    """
+    link_tag = block.find("a", href=True)
+    if not link_tag:
+        return None
+    href = link_tag["href"]
+    link = _decode_google_href(href)
+    if not _is_real_result(link):
+        return None
+    h3 = block.find("h3")
+    title = h3.get_text(strip=True) if h3 else link_tag.get_text(strip=True)[:120]
+    if not title:
+        return None
+    block_text = block.get_text(" ", strip=True)
+    desc = block_text.replace(title, "", 1).strip()[:280]
+    return SearchResult(link, title, desc)
+
+
+def _parse_with(soup: BeautifulSoup, finder, extractor) -> List[SearchResult]:
+    """运行一组 finder/extractor 提取结果."""
+    out: List[SearchResult] = []
+    for block in finder(soup):
+        item = extractor(block)
+        if item:
+            out.append(item)
+    return out
 
 
 async def parse_results(resp_text: str, deduplicate_results: bool) -> List[SearchResult]:
     """
-    解析搜索结果 (Opera Mini UA 结构)
-    Parse search results (Opera Mini UA structure)
+    多策略解析降级链 / Multi-strategy parser with fallback chain.
 
-    Args:
-        resp_text (str): 响应文本 / Response text
-        deduplicate_results (bool): 是否去重 / Whether to deduplicate
-
-    Returns:
-        List[SearchResult]: 搜索结果列表 / List of search results
+    顺序 / Priority:
+      1. Lynx 路径:  div.ezO2md            (Nv7-GitHub master)
+      2. data-hveid 路径: div[data-hveid] 含 h3 (ddgs 当前 / 桌面新结构)
+      3. Opera Mini 路径: div.Gx5Zad        (旧轻量 SERP)
+      4. 兜底:      任何含 h3 的 a 的祖先 div
     """
-    results = []
     soup = BeautifulSoup(resp_text, "html.parser")
 
-    # Opera Mini 返回的结构 (div.Gx5Zad)
-    # Opera Mini structure (div.Gx5Zad)
-    # 参考 / Reference: deedy5/ddgs
-    for result in soup.find_all("div", class_="Gx5Zad"):
-        result_data = _extract_result_data_opera(result)
-        if result_data:
-            results.append(result_data)
+    strategies = [
+        # 2026-05 实测主路径: Opera Mini UA → div.Gx5Zad
+        # Empirically primary path (2026-05): Opera Mini UA → div.Gx5Zad
+        (lambda s: s.find_all("div", class_="Gx5Zad"), _extract_opera_mini),
+        # Lynx 路径(Nv7-GitHub master 用法,2026-05 已被 Google 拒)
+        # Lynx path (still in Nv7-GitHub master, blocked by Google in 2026-05)
+        (lambda s: s.find_all("div", class_="ezO2md"), _extract_lynx),
+        # 桌面新结构兜底 / Desktop new-structure fallback
+        (
+            lambda s: [
+                b for b in s.find_all("div", attrs={"data-hveid": True}) if b.find("h3")
+            ],
+            _extract_generic,
+        ),
+    ]
+
+    results: List[SearchResult] = []
+    for finder, extractor in strategies:
+        results = _parse_with(soup, finder, extractor)
+        if results:
+            break
+
+    if not results:
+        # 最终兜底: 所有 h3 的最近祖先 div
+        # Last resort: nearest div ancestor of every h3
+        seen_blocks = set()
+        last_resort_blocks = []
+        for h3 in soup.find_all("h3"):
+            parent = h3.find_parent("div")
+            if parent is not None and id(parent) not in seen_blocks:
+                seen_blocks.add(id(parent))
+                last_resort_blocks.append(parent)
+        results = [_extract_generic(b) for b in last_resort_blocks]
+        results = [r for r in results if r]
 
     if deduplicate_results:
         results = deduplicate(results)
-
     return results
-
-
-def _extract_result_data_opera(result: BeautifulSoup) -> Optional[SearchResult]:
-    """
-    从搜索结果块中提取数据 (Opera Mini UA 返回的结构)
-    Extract data from search result block (Opera Mini UA structure)
-
-    参考 / Reference: deedy5/ddgs
-    https://github.com/deedy5/ddgs
-
-    Args:
-        result (BeautifulSoup): 搜索结果块 / Search result block
-
-    Returns:
-        Optional[SearchResult]: 搜索结果对象或None / Search result object or None
-    """
-    # 查找包含 /url?q= 的链接
-    # Find link containing /url?q=
-    link_tag = result.find("a", href=lambda x: x and "/url?q=" in x)
-    if not link_tag:
-        return None
-
-    # 提取并解码链接 URL
-    # Extract and decode link URL
-    href = link_tag.get("href", "")
-    if "/url?q=" in href:
-        # 解码 URL: /url?q=https%3A%2F%2Fwww.python.org%2F&sa=U&...
-        link = unquote(href.split("/url?q=")[1].split("&")[0])
-    else:
-        link = href
-
-    # 跳过非 HTTP 链接 (如 Google 内部链接)
-    # Skip non-HTTP links (like Google internal links)
-    if not link.startswith("http"):
-        return None
-
-    # 查找标题 (在 h3 标签内)
-    # Find title (inside h3 tag)
-    h3_tag = result.find("h3")
-    title = ""
-    if h3_tag:
-        # 标题可能在嵌套的 div 中
-        title = h3_tag.get_text(strip=True)
-
-    # 查找描述 (在 class 包含 "H66NU" 或 "InXCmc" 的 div 中)
-    # Find description (in div with class containing "H66NU" or "InXCmc")
-    description = ""
-    desc_tag = result.find("div", class_=lambda x: x and ("H66NU" in x or "InXCmc" in x))
-    if desc_tag:
-        description = desc_tag.get_text(strip=True)
-
-    # 如果没有标题，尝试从链接文本获取
-    # If no title, try to get from link text
-    if not title and link_tag:
-        title = link_tag.get_text(strip=True)
-
-    if not title:
-        return None
-
-    return SearchResult(link, title, description)
 
 
 async def search(
@@ -152,52 +238,29 @@ async def search(
     timeout: int = 10,
     deduplicate_results: bool = True,
     start: int = 0,
-    **kwargs: Any
+    **kwargs: Any,
 ) -> List[SearchResult]:
     """
     执行 Google 搜索（支持自动翻页）
     Perform Google search (with automatic pagination)
-
-    Args:
-        url: 搜索域名URL，默认随机选择 / Search domain URL, random by default
-        headers: 请求头，默认随机User-Agent / Request headers, random User-Agent by default
-        term: 搜索关键词 / Search term
-        num: 返回结果数量，默认10 / Number of results to return, default 10
-        lang: 搜索语言，默认en / Search language, default en
-        proxy: 代理配置 / Proxy configuration
-        sleep_interval: 请求间隔时间（秒）/ Request interval time (seconds)
-        timeout: 超时时间 / Timeout duration
-        deduplicate_results: 是否去重，默认True / Whether to deduplicate, default True
-        start: 起始位置，用于手动分页 / Start position for manual pagination
-        **kwargs: 其他Google搜索参数 / Additional Google search parameters
-
-    Returns:
-        List[SearchResult]: 搜索结果列表 / List of search results
-
-    Raises:
-        ValueError: 页面无响应 / No response from page
-        httpx.HTTPError: HTTP请求错误 / HTTP request error
     """
-    # 使用默认配置 / Use default configuration
     if url is None:
         url = get_random_domain()
     if headers is None:
         headers = {"User-Agent": get_random_user_agent()}
 
     kwargs["hl"] = lang
-    escaped_term = term.replace(' site:', '+site:')
+    escaped_term = term.replace(" site:", "+site:")
 
-    client_options = {}
+    client_options: Dict[str, Any] = {}
     if proxy:
-        client_options['proxy'] = proxy
+        client_options["proxy"] = proxy
 
     all_results: List[SearchResult] = []
     seen_urls: set = set()
     current_start = start
-    # Google 每页约返回 10 个结果
-    # Google returns about 10 results per page
     results_per_page = 10
-    max_pages = (num // results_per_page) + 2  # 额外请求以确保足够结果
+    max_pages = (num // results_per_page) + 2
     empty_page_count = 0
 
     async with httpx.AsyncClient(**client_options) as client:
@@ -205,31 +268,24 @@ async def search(
             if len(all_results) >= num:
                 break
 
-            # 请求当前页
-            # Request current page
             resp_text = await _req(
                 url, headers, client, escaped_term,
-                timeout, start=current_start, **kwargs
+                timeout, start=current_start, **kwargs,
             )
-
             if not resp_text:
                 break
 
-            # 解析结果
-            # Parse results
             page_results = await parse_results(resp_text, deduplicate_results=False)
 
             if not page_results:
                 empty_page_count += 1
-                if empty_page_count >= 2:  # 连续两页无结果则停止
+                if empty_page_count >= 2:
                     break
                 current_start += results_per_page
                 continue
 
             empty_page_count = 0
 
-            # 去重并添加到结果列表
-            # Deduplicate and add to results list
             for result in page_results:
                 if result.url not in seen_urls:
                     seen_urls.add(result.url)
@@ -239,13 +295,9 @@ async def search(
 
             current_start += results_per_page
 
-            # 请求间隔
-            # Request interval
             if sleep_interval > 0 and page < max_pages - 1:
                 await asyncio.sleep(sleep_interval)
 
-    # 最终去重（如果需要）
-    # Final deduplication (if needed)
     if deduplicate_results:
         all_results = deduplicate(all_results)
 
